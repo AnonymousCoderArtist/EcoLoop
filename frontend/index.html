@@ -453,7 +453,10 @@
                     <video id="camera-video" autoplay playsinline></video>
                     <canvas id="camera-canvas" hidden></canvas>
                 </div>
-                <button class="btn-primary" onclick="capturePhoto()">Capture</button>
+                <div class="camera-actions">
+                    <button class="btn-secondary" onclick="closeCamera()">Cancel</button>
+                    <button class="btn-primary" onclick="capturePhoto()">Capture</button>
+                </div>
             </div>
         </div>
     </div>

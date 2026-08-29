@@ -1143,6 +1143,12 @@ body {
   display: block;
 }
 
+.camera-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
 /* ============================================
    Responsive
    ============================================ */

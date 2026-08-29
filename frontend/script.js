@@ -579,7 +579,7 @@ function initLithosHero() {
       ease: 'power3.out'
     });
 
-    gsap.fromTo('.hero-reveal',
+    gsap.fromTo('.hero-line',
       { opacity: 0, y: 28, filter: 'blur(12px)' },
       {
         opacity: 1,
@@ -592,7 +592,7 @@ function initLithosHero() {
       }
     );
 
-    gsap.fromTo('.hero-fade',
+    gsap.fromTo('.hero-subtitle, .hero-actions',
       { opacity: 0, y: 20 },
       {
         opacity: 1,

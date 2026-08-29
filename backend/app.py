@@ -108,10 +108,11 @@ def create_app() -> Flask:
                     "description": "Pre-analyzed Swiss editorial zones (Biogas priority) - instant demo with loader",
                     "image_url": "/api/demo/image",
                     "thumbnail_url": "/api/demo/image",
+                    "original_image_url": "/api/demo/image/original",
                     "available": has_annotated,
                     "points": total_points,
                     "classes": classes,
-                    "hint": "Click to simulate 1.2s loader -> zone boxes -> points added"
+                    "hint": "Scan demo uses image.png (original) -> 1.2s loader -> annotated zones + points"
                 },
                 {
                     "id": "live",
@@ -130,15 +131,23 @@ def create_app() -> Flask:
 
     @app.get("/api/demo/image")
     def demo_image():
-        """Serve Swiss annotated image (backend/image_annotated.png)."""
+        """Serve Swiss annotated image (backend/image_annotated.png) — for final result display (F8, landing preview)."""
         backend_dir = Path(__file__).resolve().parent
         annotated = backend_dir / "image_annotated.png"
         fallback = backend_dir / "image.png"
         target = annotated if annotated.exists() else fallback
         if not target.exists():
             return jsonify({"success": False, "error": {"code": "DEMO_IMAGE_MISSING", "message": "Run uv run python backend/visualize.py first"}}), 404
-        # CORS already enabled; ensure correct mimetype
         return send_file(target, mimetype="image/png", max_age=0)
+
+    @app.get("/api/demo/image/original")
+    def demo_image_original():
+        """Serve original demo image (backend/image.png) — for scan demo preview (not annotated)."""
+        backend_dir = Path(__file__).resolve().parent
+        original = backend_dir / "image.png"
+        if not original.exists():
+            return jsonify({"success": False, "error": {"code": "DEMO_IMAGE_MISSING", "message": "Place test image at backend/image.png"}}), 404
+        return send_file(original, mimetype="image/png", max_age=0)
 
     @app.get("/api/demo/result")
     def demo_result():

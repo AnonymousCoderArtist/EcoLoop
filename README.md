@@ -8,19 +8,29 @@ Round-1 prototype: **Upload waste image → Gemini Vision → Multi-class classi
 
 ```
 .
-├── backend/               # Flask + Gemini Vision API (this repo's backend)
-│   ├── app.py             # Flask factory, routes (/api/health, /api/analyze, /api/stats)
-│   ├── gemini.py          # Gemini client, prompt, parsing, sanitization
-│   ├── config.py          # Single source of truth (MODEL name, limits, points/impact maps)
-│   ├── schemas.py         # Validation helpers (class enum, confidence, bbox, points)
-│   ├── requirements.txt   # pip deps
-│   └── .env.example       # env template
-├── frontend/              # Separate branch / dev laptop
+├── backend/               # Flask + Gemini Vision API
+│   ├── app.py             # Flask factory, /api/health, /api/analyze, /api/stats + /api/demo/* (loader + points)
+│   ├── gemini.py          # Gemini prompt — stream-area 2-6 zones, Biogas max priority
+│   ├── config.py          # Single source GEMINI_MODEL=gemini-2.5-flash, loads backend/.env
+│   ├── schemas.py         # sanitize_item, box validation, points/impact maps
+│   ├── visualize.py       # Swiss editorial overlay — light wash + 11px corners, saves backend/image_annotated.png
+│   ├── image.png          # demo input (gitignored, 1280x698)
+│   ├── image_annotated.png # Swiss zones output (gitignored, 1280x770)
+│   ├── last_result.json   # cached demo JSON (gitignored)
+│   ├── requirements.txt   # Flask 3.1, Flask-Cors, google-genai, dotenv, Pillow>=11.3
+│   └── .env.example       # GEMINI_API_KEY template
+├── frontend/              # Landing + Dashboard + Scan + Impact + Community (SPA, no build)
+│   ├── index.html         # 9-section landing: hero → proof (numbers bottom) → problem → solution 8 bento (no text over, 16/9 cover) → rewards (electricity bill) → how it works 4 → FAQ → CTA+footer (one shared image)
+│   ├── style.css          # Swiss editorial + futuristic — lime #ccff00, dark #080808, 1px borders, hero text-shadow + overlays for readability
+│   ├── script.js          # SPA nav, scan + demo, box_2d → %, stats refresh, GSAP hero, rewards pool (500pts → ₹150)
+│   ├── hero-bg.png, landfill.png, biogas.png, imagescan.png, metrics-strip.png, communiity.png, foreground-bg.png + background 1/2.png (7 real images)
+│   └── ...
 ├── docs/
-│   ├── API.md             # Full API contract for frontend
-│   └── MASTER_PLAN.md
-├── pyproject.toml         # uv project (Python 3.14)
-├── requirements.txt       # Root mirror of backend deps (for uv pip)
+│   ├── API.md             # Frontend-ready contract — quick connect, zones, demo loader, Swiss render, errors, uv
+│   └── FRONTEND_PROGRESS.md
+├── ECLOOP_BACKEND_PROMPT_SIMPLE.md # 10-step agent guide
+├── pyproject.toml         # uv project (Python 3.14, hatch packages=["backend"])
+├── requirements.txt       # root mirror
 └── README.md
 ```
 
@@ -75,20 +85,38 @@ Server at `http://127.0.0.1:5000`
 
 - `GET  /` → service info
 - `GET  /api/health` → health + gemini status
-- `POST /api/analyze` → multipart `image` field → JSON items (see `docs/API.md`)
+- `POST /api/analyze` → multipart `image` → zones `items[]` + `summary` + `box_2d` (Swiss, Biogas max)
 - `GET  /api/stats` → demo aggregate stats
+- `GET  /api/demo` → demo options (Swiss annotated vs live)
+- `GET  /api/demo/image` → final `image_annotated.png` (Swiss light wash + 11px corners)
+- `POST /api/demo/analyze` → 1.2s loader → 4 zones 45 pts + adds to stats
+- `GET  /api/demo/result` → cached JSON instant
 
-### Test
+### Test (backend + visual proof)
 
 ```bash
 curl http://127.0.0.1:5000/api/health
-curl -F "image=@test.jpg" http://127.0.0.1:5000/api/analyze
+curl -F "image=@backend/image.png" http://127.0.0.1:5000/api/analyze
+curl http://127.0.0.1:5000/api/demo --output demo.json
+curl http://127.0.0.1:5000/api/demo/image --output demo.png
 
 # Without curl:
 uv run python -c "from backend.app import create_app; app=create_app(); c=app.test_client(); print(c.get('/api/health').json)"
+
+# Visual proof — 4 Swiss zones 45 pts:
+uv run python backend/visualize.py              # live Gemini -> backend/image_annotated.png
+uv run python backend/visualize.py --cached     # re-render from backend/last_result.json
 ```
 
-Expected `GEMINI_NOT_CONFIGURED` if `.env` missing — intentional graceful error. With a valid `GEMINI_API_KEY` in `backend/.env:1`, `/api/analyze` calls Gemini and returns `items[]`.
+Expected `GEMINI_NOT_CONFIGURED` if `.env` missing — intentional. With valid `GEMINI_API_KEY` at `backend/.env:1`, `/api/analyze` returns `items[]` zones.
+
+### 5. Run frontend (integrated)
+
+```bash
+cd frontend && python -m http.server 8080  # http://localhost:8080
+# Home now scrollable: hero (clean without fear, glass backdrop) → proof → problem (landfill.png, no heavy tint) → solution 8 bento (images 16/9 contain, no text over) → how it works 4 → FAQ → CTA → footer
+# Scan page: Demo Quick Start → Try Demo — Swiss Zones (loads /api/demo/image, 1.2s loader → annotated + 45 pts) vs Upload/Camera → POST /api/analyze
+```
 
 ---
 

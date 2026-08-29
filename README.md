@@ -11,6 +11,8 @@
 ![Scan — AI Zones](frontend/imagescan.png)
 ![Rewards — Electricity Bill](frontend/communiity.png)
 ![Metrics — Live ingestion](frontend/metrics-strip.png)
+![Demo Input — Original](backend/image.png)
+![Demo Output — Annotated Swiss Zones](backend/image_annotated.png)
 
 Round-1 prototype: **Upload waste image → Gemini Vision → Multi-class classification → Disposal route → EcoPoints → Impact → Beautiful frontend**.
 

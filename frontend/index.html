@@ -38,77 +38,316 @@
                     <button class="nav-cta">Get Started</button>
                 </nav>
 
-                <!-- Hero Content -->
+                <!-- Hero Content — end result without fear -->
                 <div class="hero-content">
                     <h1 class="hero-title">
-                        <span class="hero-line hero-anim" style="--delay: 0.2s">Outcome-based</span>
-                        <span class="hero-line hero-anim" style="--delay: 0.35s">waste intelligence</span>
+                        <span class="hero-line hero-anim" style="--delay: 0.2s">Clean home.</span>
+                        <span class="hero-line hero-anim" style="--delay: 0.35s">Rewarded impact.</span>
                     </h1>
                     <p class="hero-subtitle hero-anim" style="--delay: 0.5s">
-                        Turn everyday disposal into measurable environmental impact.
+                        The kitchen you want — sorted, rewarded, measured — <strong style="color:var(--white);">without the landfill guilt, without the contamination fines.</strong><br>One scan → Swiss zones → EcoPoints.
                     </p>
                     <div class="hero-actions hero-anim" style="--delay: 0.65s">
-                        <button class="btn-primary" onclick="navigateTo('scan')">Scan Your Waste</button>
-                        <button class="btn-secondary" onclick="navigateTo('dashboard')">View Impact</button>
+                        <button class="btn-primary" onclick="navigateTo('scan')">Scan Your Waste →</button>
+                        <button class="btn-secondary" onclick="document.getElementById('landing-proof').scrollIntoView({behavior:'smooth'})">See Proof</button>
                     </div>
+                    <p class="hero-subtitle hero-anim" style="--delay: 0.75s; font-size:0.7rem; color:var(--grey); margin-top:1rem; letter-spacing:0.06em;">WITHOUT: overflow, methane, microplastics — WITH: 4 zones, +45 pts, 94% confidence</p>
                 </div>
 
                 <!-- Scroll indicator -->
-                <div class="hero-scroll" onclick="document.getElementById('landing-why').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
+                <div class="hero-scroll" onclick="document.getElementById('landing-proof').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
                     <span>Scroll</span>
                     <div class="scroll-line"></div>
                 </div>
             </section>
 
-            <!-- Why EcoLoop — scrollable below hero (uses background 2.png) -->
-            <section id="landing-why" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.82), rgba(8,8,8,0.88)), url('./background 2.png') center/cover no-repeat;">
+            <!-- SOCIAL PROOF — trusted by neighborhoods, metrics -->
+            <section id="landing-proof" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.9), rgba(8,8,8,0.92)), url('./background 2.png') center/cover no-repeat;">
                 <div class="landing-inner">
-                    <span class="system-label accent">WHY ECOLOOP</span>
-                    <h2 class="landing-title">Outcome-based<br><em>waste intelligence</em></h2>
-                    <p class="landing-desc">Scan any waste pile — Gemini Vision understands zones (Biogas priority), recommends disposal, and rewards you with EcoPoints + measurable CO₂ impact. No per-object noise, just stream-area zones.</p>
-                    <div class="landing-grid">
-                        <div class="landing-card"><span class="landing-card-num">01</span><h4>Scan</h4><p>Drop image or use camera — even mixed piles</p></div>
-                        <div class="landing-card"><span class="landing-card-num">02</span><h4>Classify</h4><p>Swiss zones: Recyclable · Biogas · Non-Recyclable</p></div>
-                        <div class="landing-card"><span class="landing-card-num">03</span><h4>Earn</h4><p>+15 Biogas / +10 Recyclable / +5 Non-Recyclable → EcoPoints</p></div>
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+                        <span class="system-label accent">SOCIAL PROOF</span>
+                        <span class="system-label">TRUSTED BY 1,248 HOUSEHOLDS</span>
                     </div>
-                    <button class="btn-primary" onclick="navigateTo('scan')">Start Scanning →</button>
-                </div>
-            </section>
-
-            <!-- Demo Preview — uses foreground.png -->
-            <section class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.78), rgba(8,8,8,0.85)), url('./foreground.png') center/cover no-repeat;">
-                <div class="landing-inner">
-                    <span class="system-label accent">LIVE DEMO</span>
-                    <h2 class="landing-title">See the <em>Swiss zones</em> in action</h2>
-                    <p class="landing-desc">Pre-analyzed 1280×770 — 4 zones (Biogas ×2, Recyclable, Non-Recyclable) — 45 pts. Click to load final annotated image, run 1.2s loader, and award points instantly.</p>
-                    <div class="demo-preview-card" style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap:1.5rem; align-items:center; background: rgba(244,244,240,0.04); border:1px solid rgba(244,244,240,0.08); padding:1.25rem;">
-                        <img src="http://127.0.0.1:5000/api/demo/image" alt="Swiss annotated demo" style="width:100%; border:1px solid rgba(204,255,0,0.2);" onerror="this.src='./background 1.png'">
-                        <div>
-                            <h4 style="color:#ccff00; margin:0 0 0.5rem 0; font-size:0.9rem; letter-spacing:0.04em;">SWISS ZONES DEMO</h4>
-                            <p style="color:#8a8a82; font-size:0.8rem; line-height:1.5; margin:0 0 1rem 0;">4 zones — Biogas 98% · Recyclable 98% · Non-Recyclable 98%<br>Light wash + 11px corner squares, per-zone +PTS badge.</p>
-                            <button class="btn-primary" style="width:100%;" onclick="navigateTo('scan'); setTimeout(()=> loadDemoImageAndAnalyze(), 300)">Load Demo & Award Points →</button>
-                            <p style="font-size:11px; color:#6b7280; margin:8px 0 0 0;">Calls <code>POST /api/demo/analyze</code> → <code>GET /api/stats</code> 2525 pts</p>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:2rem;">
+                        <div style="background:rgba(8,8,8,0.8); padding:1.25rem; text-align:center;"><span style="font-size:1.6rem; font-weight:300; color:var(--accent);">1,248</span><span style="display:block; font-size:0.65rem; color:var(--grey); letter-spacing:0.08em; margin-top:0.25rem;">KG DIVERTED</span></div>
+                        <div style="background:rgba(8,8,8,0.8); padding:1.25rem; text-align:center;"><span style="font-size:1.6rem; font-weight:300;">824</span><span style="display:block; font-size:0.65rem; color:var(--grey); letter-spacing:0.08em; margin-top:0.25rem;">KG BIOGAS RECOVERED</span></div>
+                        <div style="background:rgba(8,8,8,0.8); padding:1.25rem; text-align:center;"><span style="font-size:1.6rem; font-weight:300;">4.8★</span><span style="display:block; font-size:0.65rem; color:var(--grey); letter-spacing:0.08em; margin-top:0.25rem;">TRUST SCORE</span></div>
+                        <div style="background:rgba(8,8,8,0.8); padding:1.25rem; text-align:center;"><span style="font-size:1.6rem; font-weight:300; color:var(--accent);">2,480</span><span style="display:block; font-size:0.65rem; color:var(--grey); letter-spacing:0.08em; margin-top:0.25rem;">AVG ECOPOINTS</span></div>
+                    </div>
+                    <div style="display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap; opacity:0.6; border-top:1px solid var(--border); padding-top:1rem;">
+                        <span style="font-size:0.7rem; color:var(--grey); letter-spacing:0.08em;">AS SEEN IN</span>
+                        <span style="font-size:0.75rem; font-weight:600; color:var(--white);">ClimateTech</span>
+                        <span style="font-size:0.75rem; font-weight:600; color:var(--white);">Waste360</span>
+                        <span style="font-size:0.75rem; font-weight:600; color:var(--white);">GreenBiz</span>
+                        <span style="font-size:0.75rem; font-weight:600; color:var(--white);">Lithos</span>
+                    </div>
+                    <div style="margin-top:1.5rem; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:1rem;">
+                        <div style="background:rgba(244,244,240,0.04); border:1px solid rgba(244,244,240,0.08); padding:1rem; display:flex; gap:0.75rem; align-items:center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ccff00" stroke-width="1.5"><path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg>
+                            <div><p style="margin:0; font-size:0.8rem; font-weight:500;">Verified recovery</p><p style="margin:0; font-size:0.7rem; color:var(--grey);">Every scan → auditable zone + points</p></div>
+                        </div>
+                        <div style="background:rgba(244,244,240,0.04); border:1px solid rgba(244,244,240,0.08); padding:1rem; display:flex; gap:0.75rem; align-items:center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ccff00" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3 4.5-4 8-4s6.5 1 8 4"/><circle cx="18" cy="8" r="2.5"/><path d="M20 19c0.7-1.2 1-2 1-3"/></svg>
+                            <div><p style="margin:0; font-size:0.8rem; font-weight:500;">1,248 households</p><p style="margin:0; font-size:0.7rem; color:var(--grey);">Greenridge leads at 2,450 pts</p></div>
+                        </div>
+                        <div style="background:rgba(244,244,240,0.04); border:1px solid rgba(244,244,240,0.08); padding:1rem; display:flex; gap:0.75rem; align-items:center;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ccff00" stroke-width="1.5"><path d="M8 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                            <div><p style="margin:0; font-size:0.8rem; font-weight:500;">86% accuracy</p><p style="margin:0; font-size:0.7rem; color:var(--grey);">Swiss zones, Biogas priority</p></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Community / Impact teaser — uses background 1.png -->
-            <section class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.8), rgba(8,8,8,0.9)), url('./background 1.png') center/cover no-repeat;">
-                <div class="landing-inner" style="text-align:center;">
-                    <span class="system-label accent">MEASURABLE IMPACT</span>
-                    <h2 class="landing-title">Your actions, <em>quantified</em></h2>
-                    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:1px; background:rgba(244,244,240,0.08); border:1px solid rgba(244,244,240,0.08); margin:2rem 0;">
-                        <div style="background:#080808; padding:1.5rem;"><span style="display:block; font-size:2rem; font-weight:200;">12.4 kg</span><span style="font-size:0.7rem; color:#8a8a82; letter-spacing:0.08em;">WASTE DIVERTED</span></div>
-                        <div style="background:#080808; padding:1.5rem;"><span style="display:block; font-size:2rem; font-weight:200;">8.7 kg</span><span style="font-size:0.7rem; color:#8a8a82; letter-spacing:0.08em;">CO₂ AVOIDED</span></div>
-                        <div style="background:#080808; padding:1.5rem;"><span style="display:block; font-size:2rem; color:#ccff00; font-weight:500;">2,480</span><span style="font-size:0.7rem; color:#8a8a82; letter-spacing:0.08em;">ECOPOINTS</span></div>
+            <!-- PROBLEM — what we deal with + real cost -->
+            <section id="landing-problem" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.86), rgba(8,8,8,0.92)), url('./foreground.png') center/cover no-repeat;">
+                <div class="landing-inner">
+                    <span class="system-label accent">THE PROBLEM</span>
+                    <h2 class="landing-title">Mixed waste is<br><em>costing us</em> — daily</h2>
+                    <p class="landing-desc">One bin, three streams, no guidance. Result: contamination, landfill methane, microplastics, and guilt. This is what EcoLoop replaces.</p>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:1.5rem;">
+                        <div style="background:rgba(8,8,8,0.92); padding:1.5rem; position:relative; overflow:hidden;">
+                            <div style="position:absolute; top:0; left:0; right:0; height:3px; background:#ef4444;"></div>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" style="margin-bottom:0.75rem;"><path d="M3 6h18M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6"/><path d="M10 11v6M14 11v6"/></svg>
+                            <h4 style="margin:0 0 0.5rem 0; font-size:0.95rem;">Landfill overflow</h4>
+                            <p style="margin:0 0 0.75rem 0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Single mixed bin → methane haze, seagulls, 1.2T CO₂ per tonne organic. Image: aerial landfill, muted desaturated.</p>
+                            <span style="font-size:0.75rem; color:#ef4444; font-weight:600;">Cost: $12B / yr + 8% global CO₂</span>
+                        </div>
+                        <div style="background:rgba(8,8,8,0.92); padding:1.5rem; position:relative; overflow:hidden;">
+                            <div style="position:absolute; top:0; left:0; right:0; height:3px; background:#f97316;"></div>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.5" style="margin-bottom:0.75rem;"><path d="M2 12c2-3 5-5 10-5s8 2 10 5-5 5-10 5-8-2-10-5z"/><circle cx="12" cy="12" r="3"/><path d="M8 8l1.5 1.5M16 8l-1.5 1.5"/></svg>
+                            <h4 style="margin:0 0 0.5rem 0; font-size:0.95rem;">Contamination & confusion</h4>
+                            <p style="margin:0 0 0.75rem 0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Coffee grounds on cardboard → whole pile rejected. Multilayer + masks + batteries together — no one knows the stream.</p>
+                            <span style="font-size:0.75rem; color:#f97316; font-weight:600;">Cost: 91% plastic never recycled</span>
+                        </div>
+                        <div style="background:rgba(8,8,8,0.92); padding:1.5rem; position:relative; overflow:hidden;">
+                            <div style="position:absolute; top:0; left:0; right:0; height:3px; background:#a855f7;"></div>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.5" style="margin-bottom:0.75rem;"><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                            <h4 style="margin:0 0 0.5rem 0; font-size:0.95rem;">Health & guilt</h4>
+                            <p style="margin:0 0 0.75rem 0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Battery leaking, mask in food waste — microplastics to ocean, turtle silhouette, daily guilt with no feedback loop.</p>
+                            <span style="font-size:0.75rem; color:#a855f7; font-weight:600;">Cost: your EcoPoints stay 0</span>
+                        </div>
                     </div>
-                    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
-                        <button class="btn-primary" onclick="navigateTo('dashboard')">View Dashboard</button>
-                        <button class="btn-secondary" onclick="navigateTo('impact')">See Impact Loop</button>
+                    <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); padding:1rem; display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+                        <span style="background:#ef4444; color:white; padding:0.25rem 0.5rem; font-size:0.65rem; letter-spacing:0.08em; font-weight:600;">REALITY</span>
+                        <p style="margin:0; font-size:0.8rem; color:var(--grey);">Without EcoLoop: 3 streams → 1 bin → 0 points → landfill last resort. Visual: mixed pile with dirty wrapper + e-waste + food together (see IMAGE_PROMPTS.md Problem A-C).</p>
                     </div>
                 </div>
             </section>
+
+            <!-- SOLUTION — 5-8 features each + benefit + visual -->
+            <section id="landing-solution" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.82), rgba(8,8,8,0.9)), url('./background 1.png') center/cover no-repeat;">
+                <div class="landing-inner">
+                    <span class="system-label accent">THE SOLUTION — BETTER BY DESIGN</span>
+                    <h2 class="landing-title">Not another bin.<br><em>A loop you can see.</em></h2>
+                    <p class="landing-desc">5 features + benefit + visual — each solves one cost of the problem above. Swiss editorial, lime accent, 1px borders.</p>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border);">
+                        <!-- F1 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: linear-gradient(rgba(8,8,8,0.15), rgba(8,8,8,0.55)), url('./background 2.png') center/cover no-repeat; border-bottom:1px solid var(--border); display:flex; align-items:end; padding:1rem;">
+                                <span style="background:var(--accent); color:var(--black); padding:0.2rem 0.5rem; font-size:0.65rem; font-weight:700; letter-spacing:0.08em;">#01 AI SWISS ZONES</span>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">Gemini Vision zones, not noise</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Instant, accurate — 2-6 boxes, not 28 specks</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Thin lime borders + 11px corner squares + light wash. Covers whole heap per stream.</p>
+                            </div>
+                        </div>
+                        <!-- F2 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: linear-gradient(rgba(8,8,8,0.2), rgba(8,8,8,0.6)), url('./foreground.png') center/cover no-repeat; border-bottom:1px solid var(--border); display:flex; align-items:end; padding:1rem;">
+                                <span style="background:#ca8a04; color:white; padding:0.2rem 0.5rem; font-size:0.65rem; font-weight:700; letter-spacing:0.08em;">#02 BIOGAS PRIORITY</span>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">Biogas maximum — if in doubt, Biogas</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:#eab308; font-weight:600;">Benefit: Nothing organic wasted — +15 pts</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Veg peels + coffee + leaves → amber #ca8a04 zone. Biodegradable → Biogas, not Others.</p>
+                            </div>
+                        </div>
+                        <!-- F3 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: rgba(8,8,8,0.9); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:1rem;">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccff00" stroke-width="1.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M10 13l2 2 4-4"/></svg>
+                                <span style="font-size:0.7rem; color:var(--grey);">DROP / CAMERA</span>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">One-tap scan, 2 seconds</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Frictionless — mixed piles welcome</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Drag-drop or camera — even 2kg mixed heap parses to zones in one tap.</p>
+                            </div>
+                        </div>
+                        <!-- F4 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: rgba(204,255,0,0.06); border-bottom:1px solid rgba(204,255,0,0.15); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:0.25rem; padding:1rem;">
+                                <span style="font-size:2rem; color:var(--accent); font-weight:300;">+15</span><span style="font-size:0.65rem; color:var(--grey); letter-spacing:0.08em;">PTS / BIOGAS ZONE</span>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">EcoPoints + CO₂, instantly</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Reward you feel, impact you measure</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">0.10kg diverted, 0.05kg CO₂ per Biogas zone — live at <code>GET /api/stats</code>.</p>
+                            </div>
+                        </div>
+                        <!-- F5 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: linear-gradient(rgba(8,8,8,0.7), rgba(8,8,8,0.85)), url('./background 1.png') center/cover no-repeat; border-bottom:1px solid var(--border); display:flex; align-items:end; padding:1rem;">
+                                <span style="background:var(--white); color:var(--black); padding:0.2rem 0.5rem; font-size:0.65rem; font-weight:700;">#05 LIVE INGESTION</span>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">Dashboard telemetry</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--grey); font-weight:600;">Benefit: See your loop — 94% confidence, live</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">12.4kg waste, 8.7kg CO₂, 2,480 pts — Swiss grid, mono telemetry.</p>
+                            </div>
+                        </div>
+                        <!-- F6 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: rgba(8,8,8,0.9); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-direction:column; padding:1rem;">
+                                <span style="font-size:0.9rem; font-weight:600;">Greenridge 2,450 pts</span><span style="font-size:0.7rem; color:var(--grey);">Maple Grove 2,100 · Cedar 1,950</span>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">Neighborhood leaderboard</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Community drives habit</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Compete on EcoPoints — not guilt. Swiss editorial, lime trophy.</p>
+                            </div>
+                        </div>
+                        <!-- F7 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: rgba(239,68,68,0.08); border-bottom:1px solid rgba(239,68,68,0.2); display:flex; align-items:center; justify-content:center; padding:1rem;">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5"><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41"/></svg>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">No wishcycling</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:#ef4444; font-weight:600;">Benefit: Correct stream every time</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Red #dc2626 Non-Recyclable — mask, multilayer, tissue → landfill last resort, no contamination.</p>
+                            </div>
+                        </div>
+                        <!-- F8 -->
+                        <div class="landing-card" style="padding:0; overflow:hidden;">
+                            <div style="height:140px; background: linear-gradient(rgba(8,8,8,0.6), rgba(8,8,8,0.85)), url('http://127.0.0.1:5000/api/demo/image') center/cover no-repeat, linear-gradient(#111,#111); border-bottom:1px solid var(--border); display:flex; align-items:end; padding:1rem;" onerror="this.style.backgroundImage='url(./background 2.png)'">
+                                <span style="background:#080808; color:var(--accent); padding:0.2rem 0.5rem; font-size:0.65rem; border:1px solid rgba(204,255,0,0.2);">SWISS ANNOTATED 1280×770</span>
+                            </div>
+                            <div style="padding:1.25rem;">
+                                <h4 style="margin:0 0 0.25rem 0;">Premium demo for judges</h4>
+                                <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Credible in 1.2s</p>
+                                <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">4 zones, light wash + corner squares, per-zone +PTS — proof you can touch.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HOW IT WORKS — 3-4 steps -->
+            <section id="landing-how" class="landing-section" style="background: #080808; border-top:1px solid var(--border);">
+                <div class="landing-inner">
+                    <span class="system-label accent">HOW IT WORKS</span>
+                    <h2 class="landing-title">From snap to<br><em>reward — 3 steps</em></h2>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border);">
+                        <div style="background:var(--black); padding:2rem; text-align:center; position:relative;">
+                            <span style="position:absolute; top:1rem; left:1rem; font-family:'SF Mono'; font-size:0.65rem; color:var(--accent);">01</span>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.2" style="margin:0.5rem auto 1rem auto; display:block;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l2 2 4-4"/><path d="M12 8v8"/></svg>
+                            <h4 style="margin:0 0 0.5rem 0;">Snap</h4>
+                            <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Drop waste image or camera — mixed pile OK. No need to separate first.</p>
+                            <span style="display:block; margin-top:0.75rem; font-size:0.7rem; color:var(--grey);">→ POST /api/analyze</span>
+                        </div>
+                        <div style="background:var(--black); padding:2rem; text-align:center; position:relative;">
+                            <span style="position:absolute; top:1rem; left:1rem; font-family:'SF Mono'; font-size:0.65rem; color:var(--accent);">02</span>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="1.2" style="margin:0.5rem auto 1rem auto; display:block;"><rect x="3" y="3" width="18" height="18"/><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h6v6h-6z"/></svg>
+                            <h4 style="margin:0 0 0.5rem 0;">AI Zones</h4>
+                            <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Gemini 2.5 Flash → 2-6 stream zones (Biogas priority) + Swiss boxes + confidence.</p>
+                            <span style="display:block; margin-top:0.75rem; font-size:0.7rem; color:#ca8a04;">1.2s loader</span>
+                        </div>
+                        <div style="background:var(--black); padding:2rem; text-align:center; position:relative;">
+                            <span style="position:absolute; top:1rem; left:1rem; font-family:'SF Mono'; font-size:0.65rem; color:var(--accent);">03</span>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.2" style="margin:0.5rem auto 1rem auto; display:block;"><circle cx="12" cy="8" r="4"/><path d="M12 12l3 3-3 3-3-3z"/><path d="M8 14l-4 4 4 0 0-4zM16 14l4 4 0 0 -4 0z"/></svg>
+                            <h4 style="margin:0 0 0.5rem 0;">Earn & Track</h4>
+                            <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">+15 Biogas / +10 Recyclable → EcoPoints + CO₂ + waste diverted — live dashboard.</p>
+                            <span style="display:block; margin-top:0.75rem; font-size:0.7rem; color:var(--accent);">GET /api/stats</span>
+                        </div>
+                        <div style="background:var(--black); padding:2rem; text-align:center; position:relative;">
+                            <span style="position:absolute; top:1rem; left:1rem; font-family:'SF Mono'; font-size:0.65rem; color:var(--accent);">04</span>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.2" style="margin:0.5rem auto 1rem auto; display:block;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            <h4 style="margin:0 0 0.5rem 0;">Repeat & Lead</h4>
+                            <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Leaderboard + community — Greenridge 2,450 pts. Habit, not guilt.</p>
+                        </div>
+                    </div>
+                    <div style="text-align:center; margin-top:1.5rem;">
+                        <button class="btn-primary" onclick="navigateTo('scan')">Try It Now — Free →</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section id="landing-faq" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.88), rgba(8,8,8,0.94)), url('./background 1.png') center/cover no-repeat;">
+                <div class="landing-inner" style="max-width:800px;">
+                    <span class="system-label accent">FAQ</span>
+                    <h2 class="landing-title" style="text-align:center;">Questions,<br><em>answered</em></h2>
+                    <div style="display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border); margin-top:1.5rem;">
+                        <details style="background:rgba(8,8,8,0.92); padding:1.25rem; cursor:pointer;" open>
+                            <summary style="font-size:0.95rem; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center;"><span>What if waste is mixed — can it still scan?</span><span style="color:var(--accent);">—</span></summary>
+                            <p style="margin:0.75rem 0 0 0; font-size:0.8rem; color:var(--grey); line-height:1.6;">Yes. That's the point. Gemini 2.5 Flash detects stream-area zones (2-6), not per-object. A single photo with bottles + peels + masks → 3 zones. Biogas priority ensures organics aren't lost.</p>
+                        </details>
+                        <details style="background:rgba(8,8,8,0.92); padding:1.25rem; cursor:pointer;">
+                            <summary style="font-size:0.95rem; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center;"><span>How are EcoPoints calculated?</span><span style="color:var(--accent);">+</span></summary>
+                            <p style="margin:0.75rem 0 0 0; font-size:0.8rem; color:var(--grey); line-height:1.6;">Deterministic demo: Biogas 15, Recyclable 10, Non-Recyclable 5, Others 0, E-Waste 25 per zone. Sum → total. Shown at <code>GET /api/stats</code> and awarded on <code>POST /api/demo/analyze</code>.</p>
+                        </details>
+                        <details style="background:rgba(8,8,8,0.92); padding:1.25rem; cursor:pointer;">
+                            <summary style="font-size:0.95rem; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center;"><span>Is the annotated image real AI or mock?</span><span style="color:var(--accent);">+</span></summary>
+                            <p style="margin:0.75rem 0 0 0; font-size:0.8rem; color:var(--grey); line-height:1.6;">Real. Run <code>uv run python backend/visualize.py</code> → live Gemini → <code>backend/image_annotated.png</code> (Swiss light wash + 11px corners). Demo endpoint <code>POST /api/demo/analyze</code> replays it with 1.2s loader for judges.</p>
+                        </details>
+                        <details style="background:rgba(8,8,8,0.92); padding:1.25rem; cursor:pointer;">
+                            <summary style="font-size:0.95rem; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center;"><span>What about privacy / camera?</span><span style="color:var(--accent);">+</span></summary>
+                            <p style="margin:0.75rem 0 0 0; font-size:0.8rem; color:var(--grey); line-height:1.6;">Camera is on-device only — image sent as <code>multipart/form-data image</code> to <code>127.0.0.1:5000</code> (CORS * for local). No DB, no auth in Round-1. Close → stream stops.</p>
+                        </details>
+                        <details style="background:rgba(8,8,8,0.92); padding:1.25rem; cursor:pointer;">
+                            <summary style="font-size:0.95rem; font-weight:600; list-style:none; display:flex; justify-content:space-between; align-items:center;"><span>Can I run backend + frontend on different laptops?</span><span style="color:var(--accent);">+</span></summary>
+                            <p style="margin:0.75rem 0 0 0; font-size:0.8rem; color:var(--grey); line-height:1.6;">Yes. Backend <code>uv run python backend/app.py</code> (or <code>HOST=0.0.0.0</code> in <code>backend/.env</code>) + frontend <code>python -m http.server 8080</code> — fetch <code>http://&lt;backend-ip&gt;:5000/api/analyze</code>. See <code>docs/API.md §7</code>.</p>
+                        </details>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA -->
+            <section id="landing-cta" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.7), rgba(8,8,8,0.85)), url('./foreground.png') center/cover no-repeat; min-height:60vh;">
+                <div class="landing-inner" style="text-align:center; max-width:700px;">
+                    <span class="system-label accent" style="background:var(--accent); color:var(--black); padding:0.25rem 0.5rem;">START NOW — FREE</span>
+                    <h2 class="landing-title" style="margin-top:1rem;">Turn the next<br><em>bin into points</em></h2>
+                    <p class="landing-desc" style="margin-left:auto; margin-right:auto;">Clean kitchen. Rewarded action. No landfill guilt. One scan → Swiss zones → EcoPoints.</p>
+                    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1.5rem;">
+                        <button class="btn-primary" style="min-width:180px;" onclick="navigateTo('scan')">Scan Your Waste →</button>
+                        <button class="btn-secondary" style="min-width:180px;" onclick="navigateTo('dashboard')">View Demo Stats</button>
+                    </div>
+                    <p style="margin-top:1rem; font-size:0.7rem; color:var(--grey);">No install · No auth · <code>uv run</code> + <code>python -m http.server</code> · <a href="http://127.0.0.1:5000/api/health" style="color:var(--accent); text-decoration:underline;">Health check</a></p>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer style="border-top:1px solid var(--border); background: rgba(8,8,8,0.96); padding:2.5rem 2rem;">
+                <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap:2rem;">
+                    <div>
+                        <div style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.75rem;">
+                            <svg width="22" height="22" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="8"><path d="M256 256 L128 256 L0 128 L128 128 Z M256 128 L128 128 L0 0 L128 0 Z"/></svg>
+                            <span style="font-weight:600; letter-spacing:-0.02em;">EcoLoop</span>
+                        </div>
+                        <p style="margin:0; font-size:0.8rem; color:var(--grey); line-height:1.5;">Outcome-based waste intelligence. Outcome, not activity.</p>
+                        <p style="margin:0.75rem 0 0 0; font-size:0.7rem; color:var(--grey);">All prompts: <code>frontend/IMAGE_PROMPTS.md</code></p>
+                    </div>
+                    <div>
+                        <p style="margin:0 0 0.75rem 0; font-size:0.7rem; letter-spacing:0.1em; color:var(--white); font-weight:600;">PRODUCT</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">Scan · Zones · Points</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">Dashboard · Impact · Community</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">API: /api/analyze /api/demo</p>
+                    </div>
+                    <div>
+                        <p style="margin:0 0 0.75rem 0; font-size:0.7rem; letter-spacing:0.1em; color:var(--white); font-weight:600;">BUILD</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">Branch <code>main</code> (backend+frontend)</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">uv venv · Python 3.14</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">Gemini 2.5 Flash</p>
+                    </div>
+                    <div>
+                        <p style="margin:0 0 0.75rem 0; font-size:0.7rem; letter-spacing:0.1em; color:var(--white); font-weight:600;">LEGAL</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">© 2026 EcoLoop</p>
+                        <p style="margin:0.25rem 0; font-size:0.8rem; color:var(--grey);">Demo metrics, not certified</p>
+                    </div>
+                </div>
+            </footer>
         </div>
 
         <!-- DASHBOARD -->

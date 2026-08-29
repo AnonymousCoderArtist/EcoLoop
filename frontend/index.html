@@ -1,1 +1,527 @@
-pass
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoLoop — Outcome-based Waste Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- LANDING -->
+        <div id="page-landing" class="page active">
+            <div class="landing-bg"></div>
+            <div class="landing-content">
+                <div class="landing-top-bar">
+                    <span class="system-label">LIVE ECO INTELLIGENCE</span>
+                    <span class="system-label accent">AI WASTE INTELLIGENCE</span>
+                </div>
+                <div class="landing-hero">
+                    <div class="landing-title-group">
+                        <h1 class="landing-title">EcoLoop</h1>
+                        <p class="landing-subtitle">Outcome-based behavior<br>for a circular world.</p>
+                    </div>
+                    <div class="landing-actions">
+                        <button class="btn-primary" onclick="navigateTo('scan')">
+                            <span class="btn-glow"></span>
+                            Scan Your Waste
+                        </button>
+                        <button class="btn-secondary" onclick="navigateTo('dashboard')">
+                            View Impact
+                        </button>
+                    </div>
+                </div>
+                <div class="landing-bottom-bar">
+                    <span class="telemetry">STREAM: ECO-01</span>
+                    <span class="telemetry">CLASSIFIER: ACTIVE</span>
+                    <span class="telemetry">NODE: LOCAL</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="page-dashboard" class="page">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <div class="logo-small">ECOLOOP</div>
+                    <span class="system-label">AI WASTE INTELLIGENCE</span>
+                </div>
+                <nav class="dashboard-nav">
+                    <button class="nav-link active" data-page="dashboard" onclick="navigateTo('dashboard')">Overview</button>
+                    <button class="nav-link" data-page="scan" onclick="navigateTo('scan')">Scan</button>
+                    <button class="nav-link" data-page="impact" onclick="navigateTo('impact')">Impact</button>
+                    <button class="nav-link" data-page="community" onclick="navigateTo('community')">Community</button>
+                </nav>
+                <div class="header-right">
+                    <div class="ecopoints-badge">
+                        <span class="ep-label">ECOPOINTS</span>
+                        <span class="ep-value" id="dashboard-ecopoints">2,480</span>
+                    </div>
+                    <div class="avatar">E</div>
+                </div>
+            </header>
+
+            <main class="dashboard-main">
+                <section class="hero-metrics">
+                    <div class="section-header">
+                        <h2 class="section-title">YOUR ECO IMPACT</h2>
+                        <span class="telemetry">REAL-TIME DATA INGESTION</span>
+                    </div>
+                    <div class="metrics-grid">
+                        <div class="metric-card" id="metric-waste">
+                            <span class="metric-label">WASTE DIVERTED</span>
+                            <span class="metric-value" id="metric-waste-value">12.4</span>
+                            <span class="metric-unit">KG</span>
+                            <div class="metric-trend">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <path d="M2 8L5 4L8 6L10 2" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                                <span>+0.8 this week</span>
+                            </div>
+                        </div>
+                        <div class="metric-card" id="metric-sorts">
+                            <span class="metric-label">CORRECT SORTS</span>
+                            <span class="metric-value" id="metric-sorts-value">47</span>
+                            <div class="metric-trend">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <path d="M2 8L5 4L8 6L10 2" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                                <span>+5 this week</span>
+                            </div>
+                        </div>
+                        <div class="metric-card" id="metric-co2">
+                            <span class="metric-label">CO₂ IMPACT AVOIDED</span>
+                            <span class="metric-value" id="metric-co2-value">8.7</span>
+                            <span class="metric-unit">KG</span>
+                            <div class="metric-trend">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <path d="M2 8L5 4L8 6L10 2" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                                <span>+0.4 this week</span>
+                            </div>
+                        </div>
+                        <div class="metric-card highlight" id="metric-points">
+                            <span class="metric-label">ECOPOINTS</span>
+                            <span class="metric-value" id="metric-points-value">2,480</span>
+                            <div class="metric-trend">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <path d="M2 8L5 4L8 6L10 2" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                                <span>+120 this week</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="dashboard-grid">
+                    <section class="panel loop-panel">
+                        <h3 class="panel-title">THE LOOP IN NUMBERS</h3>
+                        <div class="loop-bars">
+                            <div class="loop-item">
+                                <div class="loop-header">
+                                    <span>Segregation Accuracy</span>
+                                    <span class="loop-pct">35%</span>
+                                </div>
+                                <div class="loop-bar-bg">
+                                    <div class="loop-bar" data-width="35%"></div>
+                                </div>
+                            </div>
+                            <div class="loop-item">
+                                <div class="loop-header">
+                                    <span>Organic Recovery</span>
+                                    <span class="loop-pct">25%</span>
+                                </div>
+                                <div class="loop-bar-bg">
+                                    <div class="loop-bar" data-width="25%"></div>
+                                </div>
+                            </div>
+                            <div class="loop-item">
+                                <div class="loop-header">
+                                    <span>Contamination Reduction</span>
+                                    <span class="loop-pct">20%</span>
+                                </div>
+                                <div class="loop-bar-bg">
+                                    <div class="loop-bar" data-width="20%"></div>
+                                </div>
+                            </div>
+                            <div class="loop-item">
+                                <div class="loop-header">
+                                    <span>Overflow Prevention</span>
+                                    <span class="loop-pct">10%</span>
+                                </div>
+                                <div class="loop-bar-bg">
+                                    <div class="loop-bar" data-width="10%"></div>
+                                </div>
+                            </div>
+                            <div class="loop-item">
+                                <div class="loop-header">
+                                    <span>Participation</span>
+                                    <span class="loop-pct">10%</span>
+                                </div>
+                                <div class="loop-bar-bg">
+                                    <div class="loop-bar" data-width="10%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel telemetry-panel">
+                        <h3 class="panel-title">REAL-TIME DATA INGESTION</h3>
+                        <div class="telemetry-grid">
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">AI VISION</span>
+                                <span class="telemetry-value active">ACTIVE</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">OBJECTS DETECTED</span>
+                                <span class="telemetry-value" id="tel-objects">03</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">CLASSIFICATION</span>
+                                <span class="telemetry-value">LIVE</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">CONFIDENCE</span>
+                                <span class="telemetry-value">94%</span>
+                            </div>
+                            <div class="telemetry-item">
+                                <span class="telemetry-label">DATA STREAM</span>
+                                <span class="telemetry-value">OPERATIONAL</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-footer">
+                            <span>MODEL: GEMINI VISION</span>
+                            <span>LATENCY: <span id="tel-latency">1.45s</span></span>
+                            <span>DATA FLOW: LIVE</span>
+                        </div>
+                    </section>
+                </div>
+
+                <section class="panel leaderboard-panel">
+                    <h3 class="panel-title">NEIGHBORHOOD LEADERBOARD</h3>
+                    <div class="leaderboard">
+                        <div class="lb-row">
+                            <span class="lb-rank">01</span>
+                            <span class="lb-name">Greenridge Terrace</span>
+                            <span class="lb-pts">2,450 pts</span>
+                            <span class="lb-trend up"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">02</span>
+                            <span class="lb-name">Maple Grove</span>
+                            <span class="lb-pts">2,100 pts</span>
+                            <span class="lb-trend up"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">03</span>
+                            <span class="lb-name">Cedar Valley</span>
+                            <span class="lb-pts">1,950 pts</span>
+                            <span class="lb-trend same"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">04</span>
+                            <span class="lb-name">Oakwood Park</span>
+                            <span class="lb-pts">1,800 pts</span>
+                            <span class="lb-trend down"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">05</span>
+                            <span class="lb-name">Haw Rahar</span>
+                            <span class="lb-pts">1,850 pts</span>
+                            <span class="lb-trend up"></span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- SCAN -->
+        <div id="page-scan" class="page">
+            <header class="scan-header">
+                <div class="header-left">
+                    <button class="btn-back" onclick="navigateTo('dashboard')">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <div class="logo-small">ECOLOOP</div>
+                </div>
+                <div class="scan-mode-toggle">
+                    <button class="mode-btn active" id="mode-real" onclick="setMode('real')">REAL API</button>
+                    <button class="mode-btn" id="mode-demo" onclick="setMode('demo')">DEMO MODE</button>
+                </div>
+                <div class="header-right">
+                    <div class="ecopoints-badge">
+                        <span class="ep-value" id="scan-ecopoints">2,480</span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="scan-main">
+                <div class="scan-layout">
+                    <div class="scan-left">
+                        <div class="scan-upload-area" id="upload-area">
+                            <div class="upload-prompt" id="upload-prompt">
+                                <div class="upload-icon">
+                                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                        <path d="M24 28V16M24 16L18 22M24 16L30 22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M14 32H34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <p class="upload-title">DROP WASTE IMAGE</p>
+                                <p class="upload-sub">or use the button below</p>
+                                <div class="upload-buttons">
+                                    <button class="btn-primary" onclick="document.getElementById('image-input').click()">
+                                        Upload Image
+                                    </button>
+                                    <button class="btn-secondary" onclick="openCamera()">
+                                        Use Camera
+                                    </button>
+                                </div>
+                                <input type="file" id="image-input" accept="image/*" hidden onchange="handleImageUpload(event)">
+                            </div>
+                            <div class="preview-container hidden" id="preview-container">
+                                <div class="preview-frame">
+                                    <img id="uploaded-image" alt="Uploaded waste image">
+                                    <div class="detection-overlay" id="detection-overlay"></div>
+                                    <div class="scan-line" id="scan-line"></div>
+                                </div>
+                                <div class="preview-meta">
+                                    <span class="system-label">AI WASTE CLASSIFIER</span>
+                                    <span class="system-label accent">REC</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scan-actions" id="scan-actions">
+                            <button class="btn-primary btn-analyze" id="btn-analyze" onclick="startAnalysis()" disabled>
+                                Analyze Waste
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="scan-right">
+                        <div class="result-panel hidden" id="result-panel">
+                            <div class="result-header">
+                                <h3 class="panel-title">ANALYSIS COMPLETE</h3>
+                                <span class="system-label" id="result-objects">01 OBJECT DETECTED</span>
+                            </div>
+                            <div class="result-items" id="result-items"></div>
+                            <div class="result-reward" id="result-reward">
+                                <div class="reward-badge">
+                                    <span class="reward-label">+ECOPOINTS</span>
+                                    <span class="reward-value" id="reward-points">0</span>
+                                </div>
+                                <div class="impact-mini">
+                                    <div class="impact-mini-item">
+                                        <span class="impact-mini-value" id="reward-co2">0</span>
+                                        <span class="impact-mini-unit">KG CO₂</span>
+                                    </div>
+                                    <div class="impact-mini-item">
+                                        <span class="impact-mini-value" id="reward-waste">0</span>
+                                        <span class="impact-mini-unit">KG WASTE</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="loop-complete">
+                                <span class="loop-title">LOOP COMPLETE</span>
+                                <div class="loop-steps">
+                                    <span>SCAN</span>
+                                    <span class="arrow">→</span>
+                                    <span>SORT</span>
+                                    <span class="arrow">→</span>
+                                    <span>RECOVER</span>
+                                    <span class="arrow">→</span>
+                                    <span>IMPACT</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="analysis-status hidden" id="analysis-status">
+                            <div class="status-lines">
+                                <p id="status-line-1">ANALYZING WASTE</p>
+                                <p id="status-line-2" class="dim">Detecting object</p>
+                                <p id="status-line-3" class="dim">Identifying material</p>
+                                <p id="status-line-4" class="dim">Determining waste stream</p>
+                                <p id="status-line-5" class="dim">Calculating impact</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- IMPACT -->
+        <div id="page-impact" class="page">
+            <header class="impact-header">
+                <div class="header-left">
+                    <button class="btn-back" onclick="navigateTo('dashboard')">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <div class="logo-small">ECOLOOP</div>
+                </div>
+                <nav class="dashboard-nav">
+                    <button class="nav-link" data-page="dashboard" onclick="navigateTo('dashboard')">Overview</button>
+                    <button class="nav-link" data-page="scan" onclick="navigateTo('scan')">Scan</button>
+                    <button class="nav-link active" data-page="impact" onclick="navigateTo('impact')">Impact</button>
+                    <button class="nav-link" data-page="community" onclick="navigateTo('community')">Community</button>
+                </nav>
+            </header>
+            <main class="impact-main">
+                <section class="impact-hero">
+                    <h2 class="section-title">YOUR IMPACT</h2>
+                    <div class="impact-metrics">
+                        <div class="impact-metric">
+                            <span class="impact-value" id="impact-sorts">47</span>
+                            <span class="impact-label">Items correctly sorted</span>
+                        </div>
+                        <div class="impact-metric">
+                            <span class="impact-value" id="impact-waste">12.4</span>
+                            <span class="impact-label">kg Waste diverted</span>
+                        </div>
+                        <div class="impact-metric">
+                            <span class="impact-value" id="impact-co2">8.7</span>
+                            <span class="impact-label">kg CO₂ impact avoided</span>
+                        </div>
+                        <div class="impact-metric">
+                            <span class="impact-value" id="impact-points">2,480</span>
+                            <span class="impact-label">EcoPoints</span>
+                        </div>
+                    </div>
+                </section>
+                <section class="impact-loop">
+                    <h3 class="panel-title">YOUR ACTION LOOP</h3>
+                    <div class="loop-visual">
+                        <div class="loop-step">
+                            <span class="loop-step-num">01</span>
+                            <span class="loop-step-title">YOUR ACTION</span>
+                        </div>
+                        <div class="loop-arrow">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <path d="M8 20H32M32 20L24 12M32 20L24 28" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="loop-step">
+                            <span class="loop-step-num">02</span>
+                            <span class="loop-step-title">CORRECT SEGREGATION</span>
+                        </div>
+                        <div class="loop-arrow">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <path d="M8 20H32M32 20L24 12M32 20L24 28" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="loop-step">
+                            <span class="loop-step-num">03</span>
+                            <span class="loop-step-title">RECOVERY</span>
+                        </div>
+                        <div class="loop-arrow">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                <path d="M8 20H32M32 20L24 12M32 20L24 28" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="loop-step">
+                            <span class="loop-step-num">04</span>
+                            <span class="loop-step-title">MEASURABLE IMPACT</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- COMMUNITY -->
+        <div id="page-community" class="page">
+            <header class="community-header">
+                <div class="header-left">
+                    <div class="logo-small">ECOLOOP</div>
+                    <span class="system-label">AI WASTE INTELLIGENCE</span>
+                </div>
+                <nav class="dashboard-nav">
+                    <button class="nav-link" data-page="dashboard" onclick="navigateTo('dashboard')">Overview</button>
+                    <button class="nav-link" data-page="scan" onclick="navigateTo('scan')">Scan</button>
+                    <button class="nav-link" data-page="impact" onclick="navigateTo('impact')">Impact</button>
+                    <button class="nav-link active" data-page="community" onclick="navigateTo('community')">Community</button>
+                </nav>
+            </header>
+            <main class="community-main">
+                <section class="community-hero">
+                    <h2 class="section-title">COMMUNITY IMPACT</h2>
+                    <div class="community-metrics">
+                        <div class="impact-metric">
+                            <span class="impact-value">1,248</span>
+                            <span class="impact-label">kg Waste diverted</span>
+                        </div>
+                        <div class="impact-metric">
+                            <span class="impact-value">824</span>
+                            <span class="impact-label">kg Organic recovered</span>
+                        </div>
+                        <div class="impact-metric">
+                            <span class="impact-value">412</span>
+                            <span class="impact-label">kg Recyclables recovered</span>
+                        </div>
+                        <div class="impact-metric">
+                            <span class="impact-value">86%</span>
+                            <span class="impact-label">Segregation accuracy</span>
+                        </div>
+                    </div>
+                </section>
+                <section class="panel leaderboard-panel">
+                    <h3 class="panel-title">NEIGHBORHOOD LEADERBOARD</h3>
+                    <div class="leaderboard">
+                        <div class="lb-row">
+                            <span class="lb-rank">01</span>
+                            <span class="lb-name">Greenridge Terrace</span>
+                            <span class="lb-pts">2,450 pts</span>
+                            <span class="lb-trend up"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">02</span>
+                            <span class="lb-name">Maple Grove</span>
+                            <span class="lb-pts">2,100 pts</span>
+                            <span class="lb-trend up"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">03</span>
+                            <span class="lb-name">Cedar Valley</span>
+                            <span class="lb-pts">1,950 pts</span>
+                            <span class="lb-trend same"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">04</span>
+                            <span class="lb-name">Oakwood Park</span>
+                            <span class="lb-pts">1,800 pts</span>
+                            <span class="lb-trend down"></span>
+                        </div>
+                        <div class="lb-row">
+                            <span class="lb-rank">05</span>
+                            <span class="lb-name">Haw Rahar</span>
+                            <span class="lb-pts">1,850 pts</span>
+                            <span class="lb-trend up"></span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- CAMERA MODAL -->
+        <div id="camera-modal" class="modal hidden">
+            <div class="modal-backdrop" onclick="closeCamera()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Camera Capture</h3>
+                    <button class="modal-close" onclick="closeCamera()">&times;</button>
+                </div>
+                <div class="camera-container">
+                    <video id="camera-video" autoplay playsinline></video>
+                    <canvas id="camera-canvas" hidden></canvas>
+                </div>
+                <button class="btn-primary" onclick="capturePhoto()">Capture</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

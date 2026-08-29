@@ -31,17 +31,26 @@ try:
 except ImportError:
     from backend.config import GEMINI_MODEL  # type: ignore
 
-# ── Style map ────────────────────────────────────────────────────────
-CLASS_COLORS: dict[str, tuple[str, str]] = {
-    # (box_color, text_bg)
-    "Recyclable": ("#22c55e", "#14532d"),        # green lime
-    "Biogas": ("#eab308", "#713f12"),            # amber/yellow — key differentiator
-    "Non-Recyclable": ("#ef4444", "#7f1d1d"),    # red
-    "E-Waste/Hazardous": ("#a855f7", "#581c87"), # purple
-    "Others": ("#9ca3af", "#1f2937"),            # gray
+# ── Style map — Swiss editorial palette ───────────────────────────
+CLASS_COLORS: dict[str, tuple[str, str, str]] = {
+    # (box_color, text_bg, light_fill_rgba_hex)
+    "Recyclable": ("#16a34a", "#14532d", "#16a34a18"),        # green, fill ~15% alpha
+    "Biogas": ("#ca8a04", "#713f12", "#eab30822"),            # amber, Biogas priority highlighted
+    "Non-Recyclable": ("#dc2626", "#7f1d1d", "#ef444418"),
+    "E-Waste/Hazardous": ("#9333ea", "#581c87", "#a855f722"),
+    "Others": ("#6b7280", "#1f2937", "#9ca3af18"),
 }
 
-FALLBACK_COLOR = ("#06b6d4", "#0c4a6e")  # cyan
+FALLBACK_COLOR = ("#0891b2", "#0c4a6e", "#06b6d422")
+
+# Convert hex with alpha to RGBA tuple
+def _hex_to_rgba(hex_str: str) -> tuple[int, int, int, int]:
+    h = hex_str.lstrip("#")
+    if len(h) == 8:  # RRGGBBAA
+        return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), int(h[6:8], 16))
+    if len(h) == 6:
+        return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), 255)
+    return (0, 0, 0, 0)
 
 # ── Helpers ──────────────────────────────────────────────────────────
 
@@ -87,20 +96,33 @@ def box_to_pixels(box_2d: list[int], img_w: int, img_h: int) -> tuple[int, int, 
     return x1, y1, x2, y2
 
 
-def draw_corner_brackets(draw: ImageDraw.ImageDraw, x1, y1, x2, y2, color, width=3, bracket_len=18):
-    """Premium corner brackets (L shapes) on top of box."""
-    # Top-left
-    draw.line([(x1, y1), (x1 + bracket_len, y1)], fill=color, width=width)
-    draw.line([(x1, y1), (x1, y1 + bracket_len)], fill=color, width=width)
+def draw_swiss_corners(draw: ImageDraw.ImageDraw, x1, y1, x2, y2, color, light_fill, width=2, corner_box=12, bracket_len=22):
+    """Swiss editorial: light wash inside + thin border + small solid squares at corners + L brackets."""
+    # Light wash inside (semi-transparent)
+    draw.rectangle([x1, y1, x2, y2], fill=light_fill, outline=None)
+    # Thin main border
+    draw.rectangle([x1, y1, x2, y2], outline=color, width=width)
+    # Small solid squares at 4 corners (Swiss grid)
+    sq = corner_box
+    for (cx, cy) in [(x1, y1), (x2 - sq, y1), (x1, y2 - sq), (x2 - sq, y2 - sq)]:
+        draw.rectangle([cx, cy, cx + sq, cy + sq], fill=color, outline="white", width=1)
+        # inner tiny dot
+        draw.rectangle([cx + 4, cy + 4, cx + sq - 4, cy + sq - 4], fill="white")
+    # Subtle L brackets extending beyond squares
+    bl = bracket_len
+    bw = 2
+    # Top-left beyond square
+    draw.line([(x1 + sq + 2, y1), (x1 + sq + 2 + bl, y1)], fill=color, width=bw)
+    draw.line([(x1, y1 + sq + 2), (x1, y1 + sq + 2 + bl)], fill=color, width=bw)
     # Top-right
-    draw.line([(x2 - bracket_len, y1), (x2, y1)], fill=color, width=width)
-    draw.line([(x2, y1), (x2, y1 + bracket_len)], fill=color, width=width)
+    draw.line([(x2 - sq - 2 - bl, y1), (x2 - sq - 2, y1)], fill=color, width=bw)
+    draw.line([(x2, y1 + sq + 2), (x2, y1 + sq + 2 + bl)], fill=color, width=bw)
     # Bottom-left
-    draw.line([(x1, y2 - bracket_len), (x1, y2)], fill=color, width=width)
-    draw.line([(x1, y2), (x1 + bracket_len, y2)], fill=color, width=width)
+    draw.line([(x1 + sq + 2, y2), (x1 + sq + 2 + bl, y2)], fill=color, width=bw)
+    draw.line([(x1, y2 - sq - 2 - bl), (x1, y2 - sq - 2)], fill=color, width=bw)
     # Bottom-right
-    draw.line([(x2 - bracket_len, y2), (x2, y2)], fill=color, width=width)
-    draw.line([(x2, y2 - bracket_len), (x2, y2)], fill=color, width=width)
+    draw.line([(x2 - sq - 2 - bl, y2), (x2 - sq - 2, y2)], fill=color, width=bw)
+    draw.line([(x2, y2 - sq - 2 - bl), (x2, y2 - sq - 2)], fill=color, width=bw)
 
 
 def annotate_image(
@@ -123,33 +145,31 @@ def annotate_image(
     font_large = get_font(16)
     font_tick = get_font(11)
 
-    # ── Draw each box ────────────────────────────────────────────────
-    # Sort by confidence desc for visual priority, but keep original index for label
-    # We keep original order index (1-based as detection order) for correctness check
+    # ── Draw each zone box ─────────────────────────────────────────
     for idx, item in enumerate(items, start=1):
         box = item.get("box_2d")
         if not box:
-            continue  # skip items without localization — don't fabricate
+            continue
         klass = item.get("class", "Others")
-        box_color, bg_color = CLASS_COLORS.get(klass, FALLBACK_COLOR)
+        # Unpack 3-tuple
+        try:
+            box_color, bg_color, light_hex = CLASS_COLORS.get(klass, FALLBACK_COLOR)
+        except ValueError:
+            box_color, bg_color = CLASS_COLORS.get(klass, FALLBACK_COLOR)[:2]
+            light_hex = "#ffffff18"
+        light_fill = _hex_to_rgba(light_hex)
         x1, y1, x2, y2 = box_to_pixels(box, w, h)
 
-        # Main rectangle (2-3px)
-        for off in range(3):
-            draw.rectangle([x1 - off, y1 - off, x2 + off, y2 + off], outline=box_color)
+        # Swiss: light wash + thin border + small corner squares
+        draw_swiss_corners(draw, x1, y1, x2, y2, box_color, light_fill, width=2, corner_box=11, bracket_len=18)
 
-        # Corner brackets (premium)
-        draw_corner_brackets(draw, x1, y1, x2, y2, box_color, width=3, bracket_len=20)
-
-        # ── Label above box ─────────────────────────────────────────
-        # Label: "#i ITEM • CLASS 98% • +15 pts"
-        item_name = item.get("item", "?")[:28]
+        # ── Swiss label above box (uppercase, tracking) ─────────────
+        item_name = item.get("item", "?")[:30]
         confidence = item.get("confidence", 0)
         points = item.get("points", 0)
-        label = f"#{idx} {item_name}  •  {klass.upper()} {confidence}%  •  +{points} pts"
+        # Swiss typographic caps with dot separators
+        label = f"#{idx:02d}  {item_name.upper()}  ·  {klass.upper()}  ·  {confidence}%  ·  +{points} PTS"
 
-        # Measure text
-        # Use getbbox for newer Pillow
         try:
             bbox = draw.textbbox((0, 0), label, font=font_med)
             text_w = bbox[2] - bbox[0]
@@ -157,60 +177,62 @@ def annotate_image(
         except Exception:
             text_w, text_h = draw.textlength(label, font=font_med), 14
 
-        pad_x, pad_y = 8, 4
+        pad_x, pad_y = 10, 5
         label_w = text_w + pad_x * 2
         label_h = text_h + pad_y * 2
 
-        # Position: above box if space, else inside top
+        # Position: above box if space, else inside top with offset for corner squares
         lx1 = x1
-        ly1 = y1 - label_h - 6
+        ly1 = y1 - label_h - 8
         if ly1 < 0:
-            ly1 = y1 + 4
+            ly1 = y1 + 14  # below corner squares
         lx2 = lx1 + label_w
         ly2 = ly1 + label_h
-        # Clamp to image
         if lx2 > w:
             lx2 = w
             lx1 = max(0, lx2 - label_w)
 
-        # Background rect + border
+        # Swiss label: solid bg, 1px border, small left accent bar
         draw.rectangle([lx1, ly1, lx2, ly2], fill=bg_color, outline=box_color, width=1)
-        draw.text((lx1 + pad_x, ly1 + pad_y), label, fill="white", font=font_med)
+        # Left accent bar (4px)
+        draw.rectangle([lx1, ly1, lx1 + 4, ly2], fill=box_color)
+        draw.text((lx1 + pad_x + 4, ly1 + pad_y), label, fill="white", font=font_med)
 
-        # ── Small index badge in corner (extra visibility) ──────────
-        # Circle badge at top-left of box
-        badge_r = 14
-        bx, by = x1 + 6, y1 + 6
-        # Ensure badge inside box if label above overlaps
-        if ly1 == y1 + 4:  # label inside, shift badge down
-            by = ly2 + 6
-        draw.ellipse([bx - badge_r, by - badge_r, bx + badge_r, by + badge_r], fill=box_color, outline="white", width=2)
-        idx_text = str(idx)
+        # ── Small Swiss index badge (square, not circle) ────────────
+        # Top corner already has 11px squares; add numbered square badge just inside
+        badge_sz = 22
+        bx1, by1 = x1 + 16, y1 + 16
+        if ly1 == y1 + 14:
+            by1 = ly2 + 8
+        # Ensure inside box
+        draw.rectangle([bx1, by1, bx1 + badge_sz, by1 + badge_sz], fill=box_color, outline="white", width=1)
+        idx_text = f"{idx:02d}"
         try:
             tb = draw.textbbox((0, 0), idx_text, font=font_small)
             tw, th = tb[2] - tb[0], tb[3] - tb[1]
         except Exception:
-            tw, th = 8, 10
-        draw.text((bx - tw / 2, by - th / 2), idx_text, fill="white", font=font_small)
+            tw, th = 10, 10
+        draw.text((bx1 + (badge_sz - tw) / 2, by1 + (badge_sz - th) / 2 - 1), idx_text, fill="white", font=font_small)
 
-        # ── Bottom small disposal line (inside bottom of box) ───────
-        disposal = item.get("disposal", "")[:36]
+        # ── Bottom Swiss disposal strip (monospace, subdued) ───────
+        disposal = item.get("disposal", "")[:40]
         if disposal:
-            disp_label = disposal
+            disp_label = disposal.upper()
             try:
                 db = draw.textbbox((0, 0), disp_label, font=font_tick)
                 dw, dh = db[2] - db[0], db[3] - db[1]
             except Exception:
                 dw, dh = len(disp_label) * 5, 10
             dh += 6
-            dw += 8
-            # Bottom strip
-            dx1, dy1 = x1, y2 - dh - 2
-            dx2, dy2 = min(x2, x1 + dw + 6), y2 - 2
+            dw += 10
+            dx1, dy1 = x1, y2 - dh - 4
+            dx2, dy2 = min(x2, x1 + dw + 8), y2 - 4
             if dy1 < y1:
-                dy1, dy2 = y2 + 2, y2 + dh + 2
-            draw.rectangle([dx1, dy1, dx2, dy2], fill=(0, 0, 0, 160), outline=box_color)
-            draw.text((dx1 + 4, dy1 + 2), disp_label, fill="white", font=font_tick)
+                dy1, dy2 = y2 + 4, y2 + dh + 4
+            # Swiss: white/90 with thin top rule
+            draw.rectangle([dx1, dy1, dx2, dy2], fill=(255, 255, 255, 230), outline=box_color, width=1)
+            draw.rectangle([dx1, dy1, dx2, dy1 + 2], fill=box_color)
+            draw.text((dx1 + 6, dy1 + 3), disp_label, fill="#111827", font=font_tick)
 
     # ── Footer summary bar ─────────────────────────────────────────
     total_items = summary.get("total_items", len(items))
@@ -246,7 +268,7 @@ def annotate_image(
     # Instead draw colored dots
     lx = w - 16
     for klass in reversed(classes_detected):
-        col, _ = CLASS_COLORS.get(klass, FALLBACK_COLOR)
+        col = CLASS_COLORS.get(klass, FALLBACK_COLOR)[0]
         # Measure
         try:
             tb = draw2.textbbox((0, 0), klass, font=font_tick)

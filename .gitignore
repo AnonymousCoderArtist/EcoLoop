@@ -1,4 +1,18 @@
 __pycache__/
+.env
 *.env
 *.pyc
 .env.local
+.venv/
+# Prompts — local spec only, not for repo
+ECLOOP_BACKEND_PROMPT.md
+ECLOOP_FRONTEND_PROMPT.md
+docs/MASTER_PLAN.md
+*.prompt.md
+
+# Visual test outputs — backend only, not for repo
+backend/image_annotated*.png
+backend/last_result.json
+backend/output/
+backend/image.png
+!backend/.env.example

@@ -290,6 +290,110 @@ const s = await fetch("http://127.0.0.1:5000/api/stats").then(r=>r.json());
 
 ---
 
+## 3b. Demo Mode — Annotated + Live (loader + points)
+
+For hackathon demo: frontend shows **2 cards** — Swiss pre-analyzed demo (instant) + Live upload.
+
+### GET /api/demo
+List demo options. No upload needed.
+
+**Response 200**
+```json
+{
+  "options": [
+    {
+      "id": "annotated",
+      "label": "Swiss Zones Demo",
+      "description": "Pre-analyzed Swiss editorial zones (Biogas priority) - instant demo with loader",
+      "image_url": "/api/demo/image",
+      "thumbnail_url": "/api/demo/image",
+      "available": true,
+      "points": 45,
+      "classes": ["Biogas","Non-Recyclable","Recyclable"],
+      "hint": "Click to simulate 1.2s loader -> zone boxes -> points added"
+    },
+    {
+      "id": "live",
+      "label": "Upload Your Image",
+      "description": "Live Gemini Vision analysis via /api/analyze",
+      "available": true
+    }
+  ],
+  "live": true,
+  "annotated_exists": true
+}
+```
+
+### GET /api/demo/image
+Serves `backend/image_annotated.png` (Swiss light wash + 11px corner squares, 1280×770, 1.8 MB). Use as `<img src="http://127.0.0.1:5000/api/demo/image">` or for preview.
+
+```bash
+curl http://127.0.0.1:5000/api/demo/image --output demo.png
+```
+
+### GET /api/demo/result
+Returns cached `backend/last_result.json` instantly (4 zones, 45 pts) — no Gemini call. For preloading.
+
+### POST /api/demo/analyze
+**Demo loader**: sleeps `1.2s` (frontend shows spinner), returns cached zones **and adds to `GET /api/stats` points**.
+
+**Request**
+```json
+{"demo":"annotated"}
+```
+Body optional — only one demo set.
+
+**Response 200** (same shape as `/api/analyze` + `"demo":true`)
+```json
+{
+  "success": true,
+  "items": [ /* 4 Swiss zones as above */ ],
+  "summary": {"total_items":4,"classes_detected":["Biogas","Non-Recyclable","Recyclable"],"dominant_class":"Biogas"},
+  "model": "gemini-2.5-flash",
+  "latency_ms": 1200,
+  "demo": true
+}
+```
+*`eco_points` at `GET /api/stats` increments `2480 → 2525` after this call.*
+
+**Frontend demo flow (loader → boxes → points)**
+```js
+// 1. Show two cards on load
+const demo = await fetch("http://127.0.0.1:5000/api/demo").then(r=>r.json());
+// demo.options[0] -> Swiss card with demo.options[0].image_url
+// demo.options[1] -> Live upload card
+
+// 2a. User clicks Swiss demo
+async function runDemo() {
+  showLoader(true); // 1.2s spinner
+  const j = await fetch("http://127.0.0.1:5000/api/demo/analyze", {
+    method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({demo:"annotated"})
+  }).then(r=>r.json());
+  showLoader(false);
+  renderSwissBoxes(j); // j.items with box_2d
+  const stats = await fetch("http://127.0.0.1:5000/api/stats").then(r=>r.json());
+  updatePoints(stats.eco_points); // 2525
+}
+// 2b. User uploads own image
+async function runLive(file) {
+  showLoader(true);
+  const fd = new FormData(); fd.append("image", file);
+  const j = await fetch("http://127.0.0.1:5000/api/analyze", {method:"POST", body:fd}).then(r=>r.json());
+  showLoader(false);
+  if (!j.success) handleError(j);
+  else { renderSwissBoxes(j); updatePoints(await fetch("/api/stats").then(r=>r.json())); }
+}
+```
+
+**When to use which:**
+- **Demo for judges** → `POST /api/demo/analyze` (fast, deterministic 4 zones, Swiss image at `/api/demo/image`)
+- **Live for real test** → `POST /api/analyze` (calls Gemini, 2-6 zones)
+
+Both add points identically — no frontend logic difference after `renderSwissBoxes(j)`.
+
+---
+
 ## 4. Frontend Integration Checklist
 
 - [ ] `GET /api/health` → show green if `gemini_configured`

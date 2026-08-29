@@ -14,10 +14,12 @@ import os
 import time
 from typing import Any
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from PIL import Image
 from werkzeug.exceptions import RequestEntityTooLarge
+from pathlib import Path
+import json as _json
 
 # Support both direct run (`python backend/app.py`) and module run (`uv run`)
 try:
@@ -78,6 +80,114 @@ def create_app() -> Flask:
                 "model": os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
             }
         )
+
+    # ── Demo: serve annotated Swiss image & cached zones (loader + points) ──
+    @app.get("/api/demo")
+    def demo_info():
+        """Return demo options: annotated Swiss image vs live upload."""
+        backend_dir = Path(__file__).resolve().parent
+        last_json = backend_dir / "last_result.json"
+        annotated = backend_dir / "image_annotated.png"
+        has_annotated = annotated.exists()
+        # Read points/classes from cache if exists, else static demo
+        if last_json.exists():
+            try:
+                data = _json.loads(last_json.read_text(encoding="utf-8"))
+                items = data.get("items", [])
+                total_points = sum(i.get("points", 0) for i in items)
+                classes = data.get("summary", {}).get("classes_detected", [])
+            except Exception:
+                total_points, classes = 45, ["Biogas", "Recyclable", "Non-Recyclable"]
+        else:
+            total_points, classes = 45, ["Biogas", "Recyclable", "Non-Recyclable"]
+        return jsonify({
+            "options": [
+                {
+                    "id": "annotated",
+                    "label": "Swiss Zones Demo",
+                    "description": "Pre-analyzed Swiss editorial zones (Biogas priority) - instant demo with loader",
+                    "image_url": "/api/demo/image",
+                    "thumbnail_url": "/api/demo/image",
+                    "available": has_annotated,
+                    "points": total_points,
+                    "classes": classes,
+                    "hint": "Click to simulate 1.2s loader -> zone boxes -> points added"
+                },
+                {
+                    "id": "live",
+                    "label": "Upload Your Image",
+                    "description": "Live Gemini Vision analysis via /api/analyze",
+                    "image_url": None,
+                    "available": True,
+                    "points": None,
+                    "classes": None,
+                    "hint": "POST /api/analyze with multipart image"
+                }
+            ],
+            "live": True,
+            "annotated_exists": has_annotated
+        })
+
+    @app.get("/api/demo/image")
+    def demo_image():
+        """Serve Swiss annotated image (backend/image_annotated.png)."""
+        backend_dir = Path(__file__).resolve().parent
+        annotated = backend_dir / "image_annotated.png"
+        fallback = backend_dir / "image.png"
+        target = annotated if annotated.exists() else fallback
+        if not target.exists():
+            return jsonify({"success": False, "error": {"code": "DEMO_IMAGE_MISSING", "message": "Run uv run python backend/visualize.py first"}}), 404
+        # CORS already enabled; ensure correct mimetype
+        return send_file(target, mimetype="image/png", max_age=0)
+
+    @app.get("/api/demo/result")
+    def demo_result():
+        """Return cached demo JSON instantly (for frontend to preload)."""
+        backend_dir = Path(__file__).resolve().parent
+        last_json = backend_dir / "last_result.json"
+        if not last_json.exists():
+            return jsonify({"success": False, "error": {"code": "DEMO_CACHE_MISSING", "message": "No last_result.json — run visualize.py"}}), 404
+        try:
+            data = _json.loads(last_json.read_text(encoding="utf-8"))
+            return jsonify(data), 200
+        except Exception as e:
+            return jsonify({"success": False, "error": {"code": "DEMO_CACHE_ERROR", "message": str(e)}}), 500
+
+    @app.post("/api/demo/analyze")
+    def demo_analyze():
+        """Demo loader: sleep 1.2s then return cached zones + add to points."""
+        backend_dir = Path(__file__).resolve().parent
+        last_json = backend_dir / "last_result.json"
+        # Optional JSON body {demo:"annotated"} ignored — only one demo set
+        # Simulate loader
+        time.sleep(1.2)
+        if not last_json.exists():
+            return jsonify({"success": False, "error": {"code": "DEMO_CACHE_MISSING", "message": "Run uv run python backend/visualize.py first"}}), 404
+        try:
+            result = _json.loads(last_json.read_text(encoding="utf-8"))
+        except Exception as e:
+            return jsonify({"success": False, "error": {"code": "DEMO_CACHE_ERROR", "message": str(e)}}), 500
+        # Add to points (same as /api/analyze)
+        try:
+            items = result.get("items", [])
+            points_total = sum(i.get("points", 0) for i in items)
+            diverted_total = sum(i.get("waste_diverted_kg", 0) for i in items)
+            co2_total = sum(i.get("co2_saved_kg", 0) for i in items)
+            _scan_history.append({
+                "timestamp": time.time(),
+                "items_count": len(items),
+                "points_total": points_total,
+                "waste_diverted_kg": diverted_total,
+                "co2_saved_kg": co2_total,
+                "classes": result.get("summary", {}).get("classes_detected", []),
+            })
+            if len(_scan_history) > 100:
+                _scan_history.pop(0)
+            result["latency_ms"] = 1200
+            result["demo"] = True
+        except Exception:
+            pass
+        return jsonify(result), 200
 
     @app.get("/api/stats")
     def stats():

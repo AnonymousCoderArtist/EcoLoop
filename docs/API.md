@@ -17,7 +17,7 @@ Health check + Gemini configuration status.
   "service": "EcoLoop Backend",
   "gemini_configured": true,
   "gemini_status": "ok",
-  "model": "gemini-2.0-flash"
+  "model": "gemini-2.5-flash"
 }
 ```
 
@@ -94,7 +94,7 @@ const data = await res.json();
     "width": 1706,
     "height": 959
   },
-  "model": "gemini-2.0-flash",
+  "model": "gemini-2.5-flash",
   "latency_ms": 1820
 }
 ```
@@ -191,7 +191,7 @@ curl http://127.0.0.1:5000/api/stats
  Backend reads `backend/.env`:
 ```
 GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.0-flash   # single source of truth, change without code edits
+GEMINI_MODEL=gemini-2.5-flash   # single source of truth, change without code edits
 HOST=127.0.0.1
 PORT=5000
 ```
@@ -200,28 +200,40 @@ PORT=5000
 
 ---
 
-## Running Locally
+## Running Locally (uv)
+
+> All commands use **uv** — do NOT use plain `pip`/`venv`. `uv` manages the `.venv` and pins via `uv.lock`.
 
 ```bash
-# 1. Create venv (Python 3.14)
+# 1. Create venv (Python 3.14) — creates .venv at repo root
 uv venv --python 3.14
-# Windows: .venv\Scripts\activate  |  Unix: source .venv/bin/activate
+# Activate only if you need a shell (uv run is preferred):
+# Windows: .venv\Scripts\activate
+# Unix:    source .venv/bin/activate
 
-# 2. Install deps
+# 2. Install deps (pick ONE)
+uv sync --no-install-project        # from pyproject.toml (recommended)
+# or
 uv pip install -r backend/requirements.txt
-# or: uv sync --no-install-project
 
 # 3. Configure key
 cp backend/.env.example backend/.env
-# edit backend/.env -> set GEMINI_API_KEY
+# edit backend/.env -> set GEMINI_API_KEY=...
+# (backend/.env is gitignored — never commit)
 
-# 4. Run
-python backend/app.py
-# or: uv run python backend/app.py
+# 4. Run — always via uv run so .venv + .env are respected
+uv run python backend/app.py
 # -> http://127.0.0.1:5000
+
+# Alternative: uv run with explicit module
+uv run python -m backend.app
 ```
+
 Test:
 ```bash
 curl http://127.0.0.1:5000/api/health
 curl -F "image=@test.jpg" http://127.0.0.1:5000/api/analyze
+
+# Or via uv run Python test client (no curl needed)
+uv run python -c "from backend.app import create_app; app=create_app(); print(app.test_client().get('/api/health').json)"
 ```

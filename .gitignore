@@ -4,3 +4,8 @@ __pycache__/
 *.pyc
 .env.local
 .venv/
+# Prompts — local spec only, not for repo
+ECLOOP_BACKEND_PROMPT.md
+ECLOOP_FRONTEND_PROMPT.md
+docs/MASTER_PLAN.md
+*.prompt.md

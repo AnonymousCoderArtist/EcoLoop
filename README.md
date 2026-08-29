@@ -24,35 +24,42 @@ Round-1 prototype: **Upload waste image → Gemini Vision → Multi-class classi
 └── README.md
 ```
 
-## Quick Start (Backend)
+## Quick Start (Backend) — uv
 
-### 1. Create environment (uv)
+> **Use `uv` for everything** — `uv venv` + `uv sync`/`uv pip` + `uv run`. Do not use plain `pip`/`venv`.
+
+### 1. Create environment
 
 ```bash
-uv venv --python 3.14
+uv venv --python 3.14   # creates .venv at repo root (Python 3.14.7)
+# Only if you need an interactive shell:
 # Windows: .venv\Scripts\activate
 # Unix:    source .venv/bin/activate
+# Preferred: just prefix every command with `uv run`
 ```
 
-> `.venv` is already created at repo root via `uv venv`. Activate it before manual `python` calls, or just use `uv run`.
+`.venv` is already created at repo root via `uv venv`.
 
 ### 2. Install dependencies
 
 ```bash
-uv pip install -r backend/requirements.txt
-# alternative (via pyproject):
+# Recommended — from pyproject.toml + uv.lock
 uv sync --no-install-project
+
+# Or via pip requirements mirror
+uv pip install -r backend/requirements.txt
+# (Root requirements.txt mirrors backend/requirements.txt)
 ```
 
-Core deps: `Flask`, `Flask-Cors`, `google-genai`, `python-dotenv`, `Pillow>=11.3.0` (11.1.0 has no cp314 Windows wheels).
+Core deps: `Flask==3.1.0`, `Flask-Cors==5.0.0`, `google-genai==1.21.0`, `python-dotenv==1.0.1`, `Pillow>=11.3.0` (11.1.0 has no cp314 Windows wheels — patched).
 
 ### 3. Configure Gemini
 
 ```bash
 cp backend/.env.example backend/.env
 # edit backend/.env:
-# GEMINI_API_KEY=your_gemini_api_key_here
-# GEMINI_MODEL=gemini-2.0-flash
+# GEMINI_API_KEY=your_gemini_api_key_here   # never commit — .gitignore covers .env/*.env
+# GEMINI_MODEL=gemini-2.5-flash             # single source of truth in backend/config.py:7
 ```
 
 `.env` is gitignored. `GEMINI_MODEL` is the single config constant — change without code edits.
@@ -60,9 +67,8 @@ cp backend/.env.example backend/.env
 ### 4. Run server
 
 ```bash
-python backend/app.py
-# or
-uv run python backend/app.py
+uv run python backend/app.py   # preferred — uses .venv + loads backend/.env
+# alt: uv run python -m backend.app
 ```
 
 Server at `http://127.0.0.1:5000`
@@ -77,9 +83,12 @@ Server at `http://127.0.0.1:5000`
 ```bash
 curl http://127.0.0.1:5000/api/health
 curl -F "image=@test.jpg" http://127.0.0.1:5000/api/analyze
+
+# Without curl:
+uv run python -c "from backend.app import create_app; app=create_app(); c=app.test_client(); print(c.get('/api/health').json)"
 ```
 
-Expected `GEMINI_NOT_CONFIGURED` if `.env` missing — intentional graceful error.
+Expected `GEMINI_NOT_CONFIGURED` if `.env` missing — intentional graceful error. With a valid `GEMINI_API_KEY` in `backend/.env:1`, `/api/analyze` calls Gemini and returns `items[]`.
 
 ---
 

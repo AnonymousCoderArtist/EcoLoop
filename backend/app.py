@@ -75,7 +75,7 @@ def create_app() -> Flask:
                 "service": "EcoLoop Backend",
                 "gemini_configured": ok,
                 "gemini_status": msg,
-                "model": os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+                "model": os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
             }
         )
 
@@ -243,5 +243,5 @@ if __name__ == "__main__":
         print(f"[EcoLoop] WARNING: {msg} — /api/analyze will return GEMINI_NOT_CONFIGURED until .env is set.")
         print(f"[EcoLoop] See backend/.env.example")
     print(f"[EcoLoop] Starting backend on http://{HOST}:{PORT}")
-    print(f"[EcoLoop] Model: {os.getenv('GEMINI_MODEL', 'gemini-2.0-flash')}")
+    print(f"[EcoLoop] Model: {os.getenv('GEMINI_MODEL', 'gemini-2.5-flash')}")
     app.run(host=HOST, port=PORT, debug=True)

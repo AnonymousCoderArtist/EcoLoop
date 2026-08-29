@@ -1,14 +1,20 @@
 """EcoLoop Backend Configuration — single source of truth."""
 
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load backend/.env explicitly (uv run from repo root) + fallback to cwd .env
+_BACKEND_ENV = Path(__file__).resolve().parent / ".env"
+if _BACKEND_ENV.exists():
+    load_dotenv(dotenv_path=_BACKEND_ENV, override=False)
+# Also load CWD .env if present (allows `uv run` from any dir)
+load_dotenv(override=False)
 
 # ── Gemini ──────────────────────────────────────────────────────────
 GEMINI_API_KEY: str | None = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 # ── Server ──────────────────────────────────────────────────────────
 HOST: str = os.getenv("HOST", "127.0.0.1")

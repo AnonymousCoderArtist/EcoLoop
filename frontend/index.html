@@ -38,20 +38,19 @@
                     <button class="nav-cta">Get Started</button>
                 </nav>
 
-                <!-- Hero Content — end result without fear -->
+                <!-- Hero Content -->
                 <div class="hero-content">
                     <h1 class="hero-title">
-                        <span class="hero-line hero-anim" style="--delay: 0.2s">Clean home.</span>
-                        <span class="hero-line hero-anim" style="--delay: 0.35s">Rewarded impact.</span>
+                        <span class="hero-line hero-anim" style="--delay: 0.2s">Outcome-based</span>
+                        <span class="hero-line hero-anim" style="--delay: 0.35s">waste intelligence</span>
                     </h1>
                     <p class="hero-subtitle hero-anim" style="--delay: 0.5s">
-                        The kitchen you want — sorted, rewarded, measured — <strong style="color:var(--white);">without the landfill guilt, without the contamination fines.</strong><br>One scan → Swiss zones → EcoPoints.
+                        Turn everyday disposal into measurable environmental impact.
                     </p>
                     <div class="hero-actions hero-anim" style="--delay: 0.65s">
-                        <button class="btn-primary" onclick="navigateTo('scan')">Scan Your Waste →</button>
-                        <button class="btn-secondary" onclick="document.getElementById('landing-proof').scrollIntoView({behavior:'smooth'})">See Proof</button>
+                        <button class="btn-primary" onclick="navigateTo('scan')">Scan Your Waste</button>
+                        <button class="btn-secondary" onclick="navigateTo('dashboard')">View Impact</button>
                     </div>
-                    <p class="hero-subtitle hero-anim" style="--delay: 0.75s; font-size:0.7rem; color:var(--grey); margin-top:1rem; letter-spacing:0.06em;">WITHOUT: overflow, methane, microplastics — WITH: 4 zones, +45 pts, 94% confidence</p>
                 </div>
 
                 <!-- Scroll indicator -->
@@ -62,7 +61,7 @@
             </section>
 
             <!-- SOCIAL PROOF — trusted by neighborhoods, metrics -->
-            <section id="landing-proof" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.88), rgba(8,8,8,0.88)), url('./metrics-strip.png') center/contain no-repeat; background-color: #080808;">
+            <section id="landing-proof" class="landing-section" style="background: linear-gradient(to bottom, rgba(8,8,8,0.38) 0%, rgba(8,8,8,0.12) 45%, rgba(8,8,8,0) 70%), url('./metrics-strip.png') center/cover no-repeat; background-color: #080808;">
                 <div class="landing-inner">
                     <div style="display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
                         <span class="system-label accent">SOCIAL PROOF</span>
@@ -98,8 +97,8 @@
                 </div>
             </section>
 
-            <!-- PROBLEM — what we deal with + real cost — clean, no heavy top tint like other sections -->
-            <section id="landing-problem" class="landing-section" style="background: url('./landfill.png') center/contain no-repeat; background-color: #080808; border-top: 1px solid var(--border);">
+            <!-- PROBLEM — what we deal with + real cost -->
+            <section id="landing-problem" class="landing-section" style="background: linear-gradient(to bottom, rgba(8,8,8,0.32) 0%, rgba(8,8,8,0) 55%), url('./landfill.png') center/cover no-repeat; background-color: #080808; border-top: 1px solid var(--border);">
                 <div class="landing-inner">
                     <span class="system-label accent">THE PROBLEM</span>
                     <h2 class="landing-title">Mixed waste is<br><em>costing us</em> — daily</h2>
@@ -135,7 +134,7 @@
             </section>
 
             <!-- SOLUTION — 5-8 features each + benefit + visual — bento, images clean no text over -->
-            <section id="landing-solution" class="landing-section" style="background: url('./background 1.png') center/contain no-repeat; background-color: #080808; border-top: 1px solid var(--border);">
+            <section id="landing-solution" class="landing-section" style="background: linear-gradient(to bottom, rgba(8,8,8,0.30) 0%, rgba(8,8,8,0) 50%), url('./background 1.png') center/cover no-repeat; background-color: #080808; border-top: 1px solid var(--border);">
                 <div class="landing-inner">
                     <span class="system-label accent">THE SOLUTION — BETTER BY DESIGN</span>
                     <h2 class="landing-title">Not another bin.<br><em>A loop you can see.</em></h2>
@@ -143,7 +142,7 @@
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border);">
                         <!-- F1 — bento, image as big as itself, no text over -->
                         <div class="landing-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
-                            <img src="./imagescan.png" alt="AI Swiss Zones" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:contain; background:#111; display:block; border-bottom:1px solid var(--border);">
+                            <img src="./imagescan.png" alt="AI Swiss Zones" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; background:#111; display:block; border-bottom:1px solid var(--border);">
                             <div style="padding:1.25rem;">
                                 <h4 style="margin:0 0 0.25rem 0;">Gemini Vision zones, not noise</h4>
                                 <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Instant, accurate — 2-6 boxes, not 28 specks</p>
@@ -152,7 +151,7 @@
                         </div>
                         <!-- F2 — bento, no text over image -->
                         <div class="landing-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
-                            <img src="./biogas.png" alt="Biogas Priority" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:contain; background:#111; display:block; border-bottom:1px solid var(--border);">
+                            <img src="./biogas.png" alt="Biogas Priority" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; background:#111; display:block; border-bottom:1px solid var(--border);">
                             <div style="padding:1.25rem;">
                                 <h4 style="margin:0 0 0.25rem 0;">Biogas maximum — if in doubt, Biogas</h4>
                                 <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:#eab308; font-weight:600;">Benefit: Nothing organic wasted — +15 pts</p>
@@ -184,7 +183,7 @@
                         </div>
                         <!-- F5 — bento, no text over -->
                         <div class="landing-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
-                            <img src="./background 1.png" alt="Live Ingestion" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:contain; background:#111; display:block; border-bottom:1px solid var(--border);">
+                            <img src="./background 1.png" alt="Live Ingestion" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; background:#111; display:block; border-bottom:1px solid var(--border);">
                             <div style="padding:1.25rem;">
                                 <h4 style="margin:0 0 0.25rem 0;">Dashboard telemetry</h4>
                                 <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--grey); font-weight:600;">Benefit: See your loop — 94% confidence, live</p>
@@ -193,7 +192,7 @@
                         </div>
                         <!-- F6 — bento, no text over -->
                         <div class="landing-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
-                            <img src="./communiity.png" alt="Community Leaderboard" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:contain; background:#111; display:block; border-bottom:1px solid var(--border);">
+                            <img src="./communiity.png" alt="Community Leaderboard" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; background:#111; display:block; border-bottom:1px solid var(--border);">
                             <div style="padding:1.25rem;">
                                 <h4 style="margin:0 0 0.25rem 0;">Neighborhood leaderboard</h4>
                                 <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Community drives habit</p>
@@ -213,7 +212,7 @@
                         </div>
                         <!-- F8 — bento, real annotated, no text over -->
                         <div class="landing-card" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
-                            <img src="http://127.0.0.1:5000/api/demo/image" alt="Swiss Annotated 1280x770" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:contain; background:#111; display:block; border-bottom:1px solid var(--border); background:#111;" onerror="this.src='./background 2.png'">
+                            <img src="http://127.0.0.1:5000/api/demo/image" alt="Swiss Annotated 1280x770" style="width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; background:#111; display:block; border-bottom:1px solid var(--border); background:#111;" onerror="this.src='./background 2.png'">
                             <div style="padding:1.25rem;">
                                 <h4 style="margin:0 0 0.25rem 0;">Premium demo for judges</h4>
                                 <p style="margin:0 0 0.5rem 0; font-size:0.75rem; color:var(--accent); font-weight:600;">Benefit: Credible in 1.2s</p>
@@ -264,8 +263,8 @@
                 </div>
             </section>
 
-            <!-- FAQ — clean, no heavy tint like other sections -->
-            <section id="landing-faq" class="landing-section" style="background: url('./background 1.png') center/contain no-repeat; background-color: #080808; border-top:1px solid var(--border);">
+            <!-- FAQ — clean -->
+            <section id="landing-faq" class="landing-section" style="background: linear-gradient(to bottom, rgba(8,8,8,0.28) 0%, rgba(8,8,8,0) 50%), url('./background 1.png') center/cover no-repeat; background-color: #080808; border-top:1px solid var(--border);">
                 <div class="landing-inner" style="max-width:800px;">
                     <span class="system-label accent">FAQ</span>
                     <h2 class="landing-title" style="text-align:center;">Questions,<br><em>answered</em></h2>
@@ -294,8 +293,8 @@
                 </div>
             </section>
 
-            <!-- CTA — as big as image, no crop -->
-            <section id="landing-cta" class="landing-section" style="background: url('./foreground-bg.png') center/contain no-repeat, url('./foreground.png') center/contain no-repeat; background-color: #080808; min-height:60vh; border-top:1px solid var(--border);">
+            <!-- CTA — as big as image -->
+            <section id="landing-cta" class="landing-section" style="background: linear-gradient(to bottom, rgba(8,8,8,0.35) 0%, rgba(8,8,8,0) 60%), url('./foreground-bg.png') center/cover no-repeat, url('./foreground.png') center/cover no-repeat; background-color: #080808; min-height:60vh; border-top:1px solid var(--border);">
                 <div class="landing-inner" style="text-align:center; max-width:700px;">
                     <span class="system-label accent" style="background:var(--accent); color:var(--black); padding:0.25rem 0.5rem;">START NOW — FREE</span>
                     <h2 class="landing-title" style="margin-top:1rem;">Turn the next<br><em>bin into points</em></h2>

@@ -4,7 +4,8 @@
 
 const API_BASE = 'http://127.0.0.1:5000/api/analyze';
 const API_DEMO = 'http://127.0.0.1:5000/api/demo/analyze';
-const API_DEMO_IMAGE = 'http://127.0.0.1:5000/api/demo/image';
+const API_DEMO_IMAGE = 'http://127.0.0.1:5000/api/demo/image'; // annotated final (for F8, landing preview)
+const API_DEMO_IMAGE_ORIGINAL = 'http://127.0.0.1:5000/api/demo/image/original'; // original image.png for scan demo (not annotated)
 const API_STATS = 'http://127.0.0.1:5000/api/stats';
 const API_HEALTH = 'http://127.0.0.1:5000/api/health';
 let mode = 'real';
@@ -115,7 +116,8 @@ function setImagePreview(dataUrl) {
 // ============================================
 async function loadDemoImage() {
   try {
-    const res = await fetch(API_DEMO_IMAGE);
+    // Scan demo uses ORIGINAL image.png (not annotated) — user requested image.png
+    const res = await fetch(API_DEMO_IMAGE_ORIGINAL);
     if (!res.ok) throw new Error('Demo image not available');
     const blob = await res.blob();
     const dataUrl = await new Promise((resolve, reject) => {
@@ -128,13 +130,13 @@ async function loadDemoImage() {
     mode = 'demo';
     demoLoaded = true;
     const img = document.getElementById('uploaded-image');
-    if (img) img.alt = 'Swiss Zones Demo — 4 zones';
+    if (img) img.alt = 'Demo — original image.png (will show annotated after 1.2s loader)';
     // Ensure scan page is visible
     navigateTo('scan');
     return true;
   } catch (e) {
     console.error('Demo image failed', e);
-    alert('Demo image not ready — run: uv run python backend/visualize.py');
+    alert('Demo image not ready — place test image at backend/image.png');
     return false;
   }
 }

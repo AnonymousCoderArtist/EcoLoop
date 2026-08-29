@@ -507,9 +507,230 @@ function dataUrlToBlob(dataUrl) {
 }
 
 // ============================================
+// Lithos Hero — Spotlight & Animations
+// ============================================
+function initLithosHero() {
+    const reveal = document.getElementById('reveal-layer');
+    if (!reveal) return;
+
+    const SPOTLIGHT_R = 260;
+    const mouse = { x: -999, y: -999 };
+    const smooth = { x: -999, y: -999 };
+    let rafRef = null;
+    let lastRenderX = -9999;
+    let lastRenderY = -9999;
+
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:absolute;inset:0;pointer-events:none;display:none;';
+    reveal.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    document.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    function drawMask() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const r = SPOTLIGHT_R;
+        const x = smooth.x;
+        const y = smooth.y;
+
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, r);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.4, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.6, 'rgba(255,255,255,0.75)');
+        gradient.addColorStop(0.75, 'rgba(255,255,255,0.4)');
+        gradient.addColorStop(0.88, 'rgba(255,255,255,0.12)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        const url = canvas.toDataURL();
+        reveal.style.maskImage = `url(${url})`;
+        reveal.style.webkitMaskImage = `url(${url})`;
+        reveal.style.maskSize = '100% 100%';
+        reveal.style.webkitMaskSize = '100% 100%';
+    }
+
+    function loop() {
+        smooth.x += (mouse.x - smooth.x) * 0.1;
+        smooth.y += (mouse.y - smooth.y) * 0.1;
+
+        if (Math.abs(smooth.x - lastRenderX) > 0.5 || Math.abs(smooth.y - lastRenderY) > 0.5) {
+            drawMask();
+            lastRenderX = smooth.x;
+            lastRenderY = smooth.y;
+        }
+
+        rafRef = requestAnimationFrame(loop);
+    }
+
+    loop();
+
+    if (typeof gsap !== 'undefined') {
+        gsap.to('.hero-zoom', {
+            scale: 1,
+            duration: 1.8,
+            ease: 'power3.out'
+        });
+
+        gsap.fromTo('.hero-reveal',
+            { opacity: 0, y: 28, filter: 'blur(12px)' },
+            {
+                opacity: 1,
+                y: 0,
+                filter: 'blur(0px)',
+                duration: 1.1,
+                stagger: 0.17,
+                ease: 'power3.out',
+                delay: 0.25
+            }
+        );
+
+        gsap.fromTo('.hero-fade',
+            { opacity: 0, y: 20 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                stagger: 0.15,
+                ease: 'power3.out',
+                delay: 0.7
+            }
+        );
+
+        renderLeaderboardChart();
+    }
+
+    const btn = document.getElementById('btn-start-digging');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            document.getElementById('leaderboard')?.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    return () => {
+        if (rafRef) cancelAnimationFrame(rafRef);
+        window.removeEventListener('resize', resize);
+    };
+}
+
+function renderLeaderboardChart() {
+    const svg = document.getElementById('leaderboard-chart');
+    if (!svg || typeof gsap === 'undefined') return;
+
+    const data = [
+        { name: 'Greenridge', score: 2450 },
+        { name: 'Maple Grove', score: 2100 },
+        { name: 'Cedar Valley', score: 1950 },
+        { name: 'Oakwood Park', score: 1800 },
+        { name: 'Haw Rahar', score: 1850 },
+    ];
+
+    const maxScore = Math.max(...data.map(d => d.score));
+    const barHeight = 36;
+    const gap = 16;
+    const width = 520;
+    const startY = 30;
+
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    grad.setAttribute('id', 'lbGrad');
+    grad.setAttribute('x1', '0');
+    grad.setAttribute('y1', '0');
+    grad.setAttribute('x2', '1');
+    grad.setAttribute('y2', '0');
+    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop1.setAttribute('offset', '0%');
+    stop1.setAttribute('stop-color', '#e8702a');
+    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop2.setAttribute('offset', '100%');
+    stop2.setAttribute('stop-color', '#ff9f5a');
+    grad.appendChild(stop1);
+    grad.appendChild(stop2);
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+
+    data.forEach((d, i) => {
+        const barW = (d.score / maxScore) * width;
+        const y = startY + i * (barHeight + gap);
+
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', 0);
+        rect.setAttribute('y', y);
+        rect.setAttribute('width', 0);
+        rect.setAttribute('height', barHeight);
+        rect.setAttribute('rx', 6);
+        rect.setAttribute('fill', 'url(#lbGrad)');
+        rect.setAttribute('class', 'lb-bar');
+        svg.appendChild(rect);
+
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', 10);
+        label.setAttribute('y', y + barHeight / 2 + 5);
+        label.setAttribute('fill', 'white');
+        label.setAttribute('font-size', '13');
+        label.setAttribute('font-weight', '500');
+        label.setAttribute('font-family', 'Inter, sans-serif');
+        label.textContent = d.name;
+        svg.appendChild(label);
+
+        const score = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        score.setAttribute('x', 0);
+        score.setAttribute('y', y + barHeight / 2 + 5);
+        score.setAttribute('fill', 'rgba(255,255,255,0.5)');
+        score.setAttribute('font-size', '12');
+        score.setAttribute('font-family', 'Inter, sans-serif');
+        score.setAttribute('class', 'lb-score');
+        score.textContent = d.score.toLocaleString();
+        svg.appendChild(score);
+    });
+
+    if (typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+    }
+
+    gsap.to('.lb-bar', {
+        width: (i) => (data[i].score / maxScore) * width,
+        duration: 1.4,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '#leaderboard',
+            start: 'top 80%'
+        }
+    });
+
+    gsap.to('.lb-score', {
+        x: (i) => (data[i].score / maxScore) * width + 12,
+        duration: 1.4,
+        stagger: 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '#leaderboard',
+            start: 'top 80%'
+        }
+    });
+}
+
+// ============================================
 // Init
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+    initLithosHero();
+
     // Animate loop bars when dashboard is visible
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {

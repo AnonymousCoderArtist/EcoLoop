@@ -13,33 +13,77 @@
     <div id="app">
         <!-- LANDING -->
         <div id="page-landing" class="page active">
-            <div class="landing-bg"></div>
-            <div class="landing-content">
-                <div class="landing-top-bar">
-                    <span class="system-label">LIVE ECO INTELLIGENCE</span>
-                    <span class="system-label accent">AI WASTE INTELLIGENCE</span>
-                </div>
-                <div class="landing-hero">
-                    <div class="landing-title-group">
-                        <h1 class="landing-title">EcoLoop</h1>
-                        <p class="landing-subtitle">Outcome-based behavior<br>for a circular world.</p>
-                    </div>
-                    <div class="landing-actions">
-                        <button class="btn-primary" onclick="navigateTo('scan')">
-                            <span class="btn-glow"></span>
-                            Scan Your Waste
-                        </button>
-                        <button class="btn-secondary" onclick="navigateTo('dashboard')">
-                            View Impact
-                        </button>
-                    </div>
-                </div>
-                <div class="landing-bottom-bar">
-                    <span class="telemetry">STREAM: ECO-01</span>
-                    <span class="telemetry">CLASSIFIER: ACTIVE</span>
-                    <span class="telemetry">NODE: LOCAL</span>
-                </div>
+          <!-- Lithos Hero -->
+          <section id="hero" class="relative w-full overflow-hidden bg-black" style="height: 100dvh;">
+            <!-- Base image -->
+            <div class="absolute inset-0 z-10 bg-center bg-cover bg-no-repeat hero-zoom" style="background-image: url('./background%201.png'); transform: scale(1.12);"></div>
+
+            <!-- Foreground -->
+            <div class="absolute inset-0 z-20 bg-center bg-cover bg-no-repeat pointer-events-none" style="background-image: url('./foreground.png');"></div>
+
+            <!-- Reveal layer -->
+            <div id="reveal-layer" class="absolute inset-0 z-30 bg-center bg-cover bg-no-repeat pointer-events-none" style="background-image: url('./background%202.png');"></div>
+
+            <!-- Heading -->
+            <div class="absolute top-[14%] left-0 right-0 flex flex-col items-center text-center px-5 pointer-events-none z-50">
+              <h1 class="text-white leading-[0.95]">
+                <span class="block font-playfair italic font-normal text-5xl sm:text-7xl md:text-8xl hero-anim hero-reveal" style="animation-delay: 0.25s; letter-spacing: -0.05em;">Layers hold</span>
+                <span class="block font-normal text-5xl sm:text-7xl md:text-8xl -mt-1 hero-anim hero-reveal" style="animation-delay: 0.42s; letter-spacing: -0.08em;">tales of time</span>
+              </h1>
             </div>
+
+            <!-- Bottom left -->
+            <div class="hidden sm:block absolute bottom-14 left-10 md:left-14 max-w-[260px] z-50 hero-anim hero-fade" style="animation-delay: 0.7s;">
+              <p class="text-sm text-white/80 leading-relaxed">Every layer of sediment records a chapter of our planet, from ancient seabeds to drifting ash, layered across millions of years beneath us.</p>
+            </div>
+
+            <!-- Bottom right -->
+            <div class="absolute bottom-10 sm:bottom-24 left-5 right-5 sm:left-auto sm:right-10 md:right-14 max-w-full sm:max-w-[260px] flex flex-col items-start gap-4 sm:gap-5 z-50 hero-anim hero-fade" style="animation-delay: 0.85s;">
+              <p class="text-xs sm:text-sm text-white/80 leading-relaxed">Our interactive maps let you peel back the crust to trace how stones, fossils, and deep time combine to shape the ground beneath your feet.</p>
+              <button id="btn-start-digging" class="bg-[#e8702a] hover:bg-[#d2611f] text-white text-sm font-medium px-7 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 hover:shadow-lg hover:shadow-[#e8702a]/30">Start Digging</button>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="hero-nav">
+              <div class="flex items-center gap-2">
+                <svg width="26" height="26" viewBox="0 0 256 256" fill="#ffffff">
+                  <path d="M 256 256 L 128 256 L 0 128 L 128 128 Z M 256 128 L 128 128 L 0 0 L 128 0 Z"/>
+                </svg>
+                <span class="text-white text-2xl font-playfair italic">Lithos</span>
+              </div>
+
+              <div class="nav-pill">
+                <button class="active">Course</button>
+                <button>Field Guides</button>
+                <button>Geology</button>
+                <button>Plans</button>
+                <button>Live Tour</button>
+              </div>
+
+              <div class="hidden md:block">
+                <button class="bg-white text-gray-900 text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-gray-100 transition-colors">Sign Up</button>
+              </div>
+
+              <button id="mobile-menu-btn" class="md:hidden text-white p-2">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+              </button>
+            </nav>
+          </section>
+
+          <!-- Leaderboard Section -->
+          <section id="leaderboard" class="leaderboard-section">
+            <div class="leaderboard-grid">
+              <div class="leaderboard-info">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4 font-playfair italic text-white">Community<br>Leaderboard</h2>
+                <p class="text-white/60 max-w-md text-sm leading-relaxed">Top-performing dig sites and research teams ranked by stratigraphic accuracy and fossil recovery rate.</p>
+              </div>
+              <div class="leaderboard-chart-wrap">
+                <svg id="leaderboard-chart" viewBox="0 0 600 400" class="w-full h-auto" preserveAspectRatio="xMidYMid meet"></svg>
+              </div>
+            </div>
+          </section>
         </div>
 
         <!-- DASHBOARD -->
@@ -522,6 +566,8 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

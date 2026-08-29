@@ -239,9 +239,18 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 2rem;
+  padding: 2rem;
   height: 100%;
+  /* Swiss glass for readability — hero text clear */
+  max-width: 780px;
+  margin: 0 auto;
+  background: rgba(8, 8, 8, 0.52);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(244, 244, 240, 0.08);
+  border-radius: 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   pointer-events: none;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.6);
 }
 
 .hero-title {

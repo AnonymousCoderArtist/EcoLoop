@@ -209,6 +209,7 @@ body {
   z-index: 10;
   background: url('./hero-bg.png') center/cover no-repeat, url('./background 2.png') center/cover no-repeat;
   transform: scale(1.12);
+  filter: brightness(0.62) saturate(0.9);
 }
 
 .hero-bg.hero-zoom {
@@ -221,6 +222,7 @@ body {
   z-index: 20;
   background: url('./foreground.png') center/cover no-repeat;
   pointer-events: none;
+  filter: brightness(0.60) saturate(0.9);
 }
 
 .hero-reveal {
@@ -228,6 +230,16 @@ body {
   inset: 0;
   z-index: 30;
   background: url('./background 1.png') center/cover no-repeat;
+  pointer-events: none;
+  filter: brightness(0.60) saturate(0.9);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.68) 0%, rgba(8,8,8,0.38) 42%, rgba(8,8,8,0.08) 68%, transparent 85%);
   pointer-events: none;
 }
 
@@ -242,6 +254,7 @@ body {
   padding: 0 2rem;
   height: 100%;
   pointer-events: none;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.75), 0 1px 4px rgba(0,0,0,0.9);
 }
 
 .hero-title {
@@ -304,7 +317,7 @@ body {
   background: linear-gradient(to bottom, var(--grey), transparent);
 }
 
-/* Landing scroll sections — uses background 1/2 + foreground as distinct backdrops */
+/* Landing scroll sections — images cover, subtle grey-transparent to transparent so text visible */
 .landing-section {
   position: relative;
   min-height: 70vh;
@@ -313,11 +326,28 @@ body {
   justify-content: center;
   padding: 4rem 2rem;
   border-top: 1px solid var(--border);
+  background-color: #080808;
+}
+.landing-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.64) 0%, rgba(8,8,8,0.42) 32%, rgba(8,8,8,0.18) 58%, transparent 82%);
+  pointer-events: none;
+  z-index: 0;
+}
+.landing-section > * {
+  position: relative;
+  z-index: 1;
 }
 .landing-inner {
   max-width: 1100px;
   width: 100%;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  /* subtle text backdrop for readability without box */
+  text-shadow: 0 1px 10px rgba(0,0,0,0.65);
 }
 .landing-title {
   font-size: clamp(2rem, 5vw, 3.5rem);

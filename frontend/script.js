@@ -115,22 +115,36 @@ function setImagePreview(dataUrl) {
 // ============================================
 async function loadDemoImage() {
   try {
-    // Use backend demo image as preview (no upload needed)
     const res = await fetch(API_DEMO_IMAGE);
     if (!res.ok) throw new Error('Demo image not available');
     const blob = await res.blob();
-    const reader = new FileReader();
-    reader.onload = (e) => setImagePreview(e.target.result);
-    reader.readAsDataURL(blob);
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    setImagePreview(dataUrl);
     mode = 'demo';
     demoLoaded = true;
-    // Hint in UI
     const img = document.getElementById('uploaded-image');
     if (img) img.alt = 'Swiss Zones Demo — 4 zones';
+    // Ensure scan page is visible
+    navigateTo('scan');
+    return true;
   } catch (e) {
     console.error('Demo image failed', e);
     alert('Demo image not ready — run: uv run python backend/visualize.py');
+    return false;
   }
+}
+
+async function loadDemoImageAndAnalyze() {
+  const ok = await loadDemoImage();
+  if (!ok) return;
+  // Small delay for preview render, then auto-analyze (one-click demo -> loader -> annotated + points)
+  await delay(500);
+  await startAnalysis();
 }
 
 async function callDemoAPI() {

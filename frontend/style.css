@@ -304,6 +304,76 @@ body {
   background: linear-gradient(to bottom, var(--grey), transparent);
 }
 
+/* Landing scroll sections — uses background 1/2 + foreground as distinct backdrops */
+.landing-section {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid var(--border);
+}
+.landing-inner {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+.landing-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 200;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0.75rem 0 1rem 0;
+}
+.landing-title em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+}
+.landing-desc {
+  color: var(--grey);
+  max-width: 60ch;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+.landing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+.landing-card {
+  background: rgba(8,8,8,0.92);
+  padding: 1.25rem;
+}
+.landing-card-num {
+  font-family: 'SF Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.landing-card h4 {
+  margin: 0.5rem 0 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.landing-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--grey);
+  line-height: 1.4;
+}
+.demo-preview-card {
+  border: 1px solid rgba(244,244,240,0.08);
+}
+@media (max-width: 768px) {
+  .demo-preview-card { grid-template-columns: 1fr !important; }
+  .landing-section { padding: 3rem 1rem; min-height: auto; }
+}
+
 /* ============================================
    Buttons
    ============================================ */

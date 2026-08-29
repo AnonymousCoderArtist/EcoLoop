@@ -54,9 +54,59 @@
                 </div>
 
                 <!-- Scroll indicator -->
-                <div class="hero-scroll">
+                <div class="hero-scroll" onclick="document.getElementById('landing-why').scrollIntoView({behavior:'smooth'})" style="cursor:pointer">
                     <span>Scroll</span>
                     <div class="scroll-line"></div>
+                </div>
+            </section>
+
+            <!-- Why EcoLoop — scrollable below hero (uses background 2.png) -->
+            <section id="landing-why" class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.82), rgba(8,8,8,0.88)), url('./background 2.png') center/cover no-repeat;">
+                <div class="landing-inner">
+                    <span class="system-label accent">WHY ECOLOOP</span>
+                    <h2 class="landing-title">Outcome-based<br><em>waste intelligence</em></h2>
+                    <p class="landing-desc">Scan any waste pile — Gemini Vision understands zones (Biogas priority), recommends disposal, and rewards you with EcoPoints + measurable CO₂ impact. No per-object noise, just stream-area zones.</p>
+                    <div class="landing-grid">
+                        <div class="landing-card"><span class="landing-card-num">01</span><h4>Scan</h4><p>Drop image or use camera — even mixed piles</p></div>
+                        <div class="landing-card"><span class="landing-card-num">02</span><h4>Classify</h4><p>Swiss zones: Recyclable · Biogas · Non-Recyclable</p></div>
+                        <div class="landing-card"><span class="landing-card-num">03</span><h4>Earn</h4><p>+15 Biogas / +10 Recyclable / +5 Non-Recyclable → EcoPoints</p></div>
+                    </div>
+                    <button class="btn-primary" onclick="navigateTo('scan')">Start Scanning →</button>
+                </div>
+            </section>
+
+            <!-- Demo Preview — uses foreground.png -->
+            <section class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.78), rgba(8,8,8,0.85)), url('./foreground.png') center/cover no-repeat;">
+                <div class="landing-inner">
+                    <span class="system-label accent">LIVE DEMO</span>
+                    <h2 class="landing-title">See the <em>Swiss zones</em> in action</h2>
+                    <p class="landing-desc">Pre-analyzed 1280×770 — 4 zones (Biogas ×2, Recyclable, Non-Recyclable) — 45 pts. Click to load final annotated image, run 1.2s loader, and award points instantly.</p>
+                    <div class="demo-preview-card" style="display:grid; grid-template-columns: 1.2fr 0.8fr; gap:1.5rem; align-items:center; background: rgba(244,244,240,0.04); border:1px solid rgba(244,244,240,0.08); padding:1.25rem;">
+                        <img src="http://127.0.0.1:5000/api/demo/image" alt="Swiss annotated demo" style="width:100%; border:1px solid rgba(204,255,0,0.2);" onerror="this.src='./background 1.png'">
+                        <div>
+                            <h4 style="color:#ccff00; margin:0 0 0.5rem 0; font-size:0.9rem; letter-spacing:0.04em;">SWISS ZONES DEMO</h4>
+                            <p style="color:#8a8a82; font-size:0.8rem; line-height:1.5; margin:0 0 1rem 0;">4 zones — Biogas 98% · Recyclable 98% · Non-Recyclable 98%<br>Light wash + 11px corner squares, per-zone +PTS badge.</p>
+                            <button class="btn-primary" style="width:100%;" onclick="navigateTo('scan'); setTimeout(()=> loadDemoImageAndAnalyze(), 300)">Load Demo & Award Points →</button>
+                            <p style="font-size:11px; color:#6b7280; margin:8px 0 0 0;">Calls <code>POST /api/demo/analyze</code> → <code>GET /api/stats</code> 2525 pts</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Community / Impact teaser — uses background 1.png -->
+            <section class="landing-section" style="background: linear-gradient(rgba(8,8,8,0.8), rgba(8,8,8,0.9)), url('./background 1.png') center/cover no-repeat;">
+                <div class="landing-inner" style="text-align:center;">
+                    <span class="system-label accent">MEASURABLE IMPACT</span>
+                    <h2 class="landing-title">Your actions, <em>quantified</em></h2>
+                    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:1px; background:rgba(244,244,240,0.08); border:1px solid rgba(244,244,240,0.08); margin:2rem 0;">
+                        <div style="background:#080808; padding:1.5rem;"><span style="display:block; font-size:2rem; font-weight:200;">12.4 kg</span><span style="font-size:0.7rem; color:#8a8a82; letter-spacing:0.08em;">WASTE DIVERTED</span></div>
+                        <div style="background:#080808; padding:1.5rem;"><span style="display:block; font-size:2rem; font-weight:200;">8.7 kg</span><span style="font-size:0.7rem; color:#8a8a82; letter-spacing:0.08em;">CO₂ AVOIDED</span></div>
+                        <div style="background:#080808; padding:1.5rem;"><span style="display:block; font-size:2rem; color:#ccff00; font-weight:500;">2,480</span><span style="font-size:0.7rem; color:#8a8a82; letter-spacing:0.08em;">ECOPOINTS</span></div>
+                    </div>
+                    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                        <button class="btn-primary" onclick="navigateTo('dashboard')">View Dashboard</button>
+                        <button class="btn-secondary" onclick="navigateTo('impact')">See Impact Loop</button>
+                    </div>
                 </div>
             </section>
         </div>

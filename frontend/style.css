@@ -207,7 +207,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: 10;
-  background: url('./background 2.png') center/cover no-repeat;
+  background: url('./hero-bg.png') center/cover no-repeat, url('./background 2.png') center/cover no-repeat;
   transform: scale(1.12);
 }
 

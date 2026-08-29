@@ -44,6 +44,7 @@ Dark editorial data wall, four metric cards on 1px grid (1,248kg/824kg/4.8★/2,
 ```
 
 **Prompt S2 — SVG Icon Set (generate as SVG, not photo):**
+> **SKIP — NOT GENERATING (use inline SVG already in site at `frontend/index.html` + `style.css`)**
 ```
 Minimal line SVG icon set on black #080808: shield-check, users-group, leaf, trophy, bar-chart — 2px stroke, lime #CCFF00, 24×24 grid, Swiss, futuristic thin glow, consistent line weight
 ```
@@ -54,6 +55,7 @@ Diverse urban neighborhood (4 people, 20s-40s) holding phone showing EcoLoop lea
 ```
 
 **Prompt S4 — Logo strip:**
+> **SKIP — NOT GENERATING (use text logos already in site)**
 ```
 Five minimal climate-tech logotypes in grey #8a8a82 on black, 1px border grid, "As seen in" label mono 10px, Swiss editorial, same palette, horizontal strip
 ```
@@ -129,6 +131,7 @@ Contaminated face mask + multilayer packaging flagged red #DC2626 zone, thin red
 ```
 
 **F8 — Swiss Annotated Final (hero for demo, 1280×770):**
+> **USE REAL — NOT GENERATING (use `backend/image_annotated.png` real AI output, served at `/api/demo/image`)**
 ```
 Full annotated waste image 1280×770 with 4 zones, each with light wash fill, thin border, 11px corner squares, per-zone label "#02 BIOGAS ZONE · 98% · +15 PTS" with amber bg, footer slate #0F172A, lime top rule, premium Swiss editorial, same lighting as all above — this is the final proof judges touch
 ```

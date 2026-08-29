@@ -51,7 +51,9 @@ async function openCamera() {
     cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     const video = document.getElementById('camera-video');
     video.srcObject = cameraStream;
-    document.getElementById('camera-modal')?.classList.remove('hidden');
+    const modal = document.getElementById('camera-modal');
+    modal?.classList.remove('hidden');
+    if (modal) modal.style.display = '';
   } catch (err) {
     console.error('Camera error:', err);
     alert('Unable to access camera. Please use image upload instead.');
@@ -63,7 +65,9 @@ function closeCamera() {
     cameraStream.getTracks().forEach(t => t.stop());
     cameraStream = null;
   }
-  document.getElementById('camera-modal')?.classList.add('hidden');
+  const modal = document.getElementById('camera-modal');
+  modal?.classList.add('hidden');
+  if (modal) modal.style.display = 'none';
 }
 
 function capturePhoto() {
@@ -650,4 +654,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCamera();
+  });
 });

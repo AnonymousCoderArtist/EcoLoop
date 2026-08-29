@@ -1,5 +1,17 @@
 # EcoLoop — Outcome-Based Waste Behaviour Platform
 
+> **Built for IIT Guwahati — Avinya Round 1 Hackathon**  
+> *Theme: Outcome-based waste intelligence — Scan → AI Swiss Zones (Biogas max) → Earn EcoPoints → Redeem for electricity bill*
+
+**Demo:** `uv run python backend/app.py` + `cd frontend && python -m http.server 8080` → `http://localhost:8080` (Try Demo → 4 zones, 45 pts)
+
+![Hero — Clean without fear](frontend/hero-bg.png)
+![Swiss Zones — Biogas priority](frontend/biogas.png)
+![Problem — Landfill cost](frontend/landfill.png)
+![Scan — AI Zones](frontend/imagescan.png)
+![Rewards — Electricity Bill](frontend/communiity.png)
+![Metrics — Live ingestion](frontend/metrics-strip.png)
+
 Round-1 prototype: **Upload waste image → Gemini Vision → Multi-class classification → Disposal route → EcoPoints → Impact → Beautiful frontend**.
 
 ---
@@ -141,9 +153,17 @@ See `docs/API.md` for **frontend quick-connect** ( `uv run` + `curl` + JS `fetch
 
 The frontend on a separate laptop can integrate independently without waiting — **CORS `*`, no auth**, `POST /api/analyze` with `FormData image` returns `items[]` zones ready to render. Visual reference: `uv run python backend/visualize.py` → `backend/image_annotated.png`.
 
+## For IIT Guwahati — Avinya Round 1
+
+**Submission for IIT Guwahati Avinya (E-Cell) Round 1 Hackathon — Outcome-based waste intelligence.**
+
+Judges: scan `backend/image.png` → `POST /api/analyze` → 4 Swiss zones (Biogas ×2, Recyclable, Non-Recyclable) → `45 EcoPoints` → redeem for **electricity bill (500pts → ₹150)**. Demo also at `POST /api/demo/analyze` (1.2s loader) → `GET /api/stats`.
+
+All images above are real assets from `frontend/` (hero, biogas, landfill, scan, community, metrics) + `backend/image_annotated.png` (Swiss light wash + 11px corners). Built with `gemini-2.5-flash` (Biogas max priority).
+
 ## Design Philosophy
 
-Premium, environmental, intelligent, measurable — backend exposes `confidence`, `disposal`, `points`, `waste_diverted_kg`, `co2_saved_kg`, and optional `box_2d` for the visual AI detection experience (lime rectangles, badges, LIVE indicators).
+Premium, environmental, intelligent, measurable — backend exposes `confidence`, `disposal`, `points`, `waste_diverted_kg`, `co2_saved_kg`, and optional `box_2d` for the visual AI detection experience (lime rectangles, badges, LIVE indicators). Whole site is Swiss editorial + futuristic (lime #ccff00, dark #080808, 1px grid, glass blur).
 
 ## Future (deferred)
 

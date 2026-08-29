@@ -813,3 +813,802 @@ At the end, report:
 - demo flow tested
 - remaining issues
 - optional expansion ideas only if the core is complete
+
+
+---
+
+# 29. VISUAL ENHANCEMENT — REAL-TIME DATA INGESTION
+
+The supplied second EcoLoop reference image is now an additional visual direction.
+
+Use the idea of:
+
+## REAL-TIME DATA INGESTION
+
+Do NOT literally copy the slide.
+
+Translate the visual language into the web application.
+
+The visual concept combines:
+
+NATURAL ENVIRONMENT
++
+TECHNICAL TELEMETRY
++
+AI COMPUTER VISION
++
+LIVE WASTE CLASSIFICATION
+
+This should make EcoLoop feel like an actual intelligent infrastructure platform rather than only a recycling website.
+
+---
+
+# 30. AI VISION HIGHLIGHT OVERLAY — IMPORTANT
+
+When the backend returns `box_2d` coordinates, draw bounding boxes over the uploaded image.
+
+For example:
+
+Image contains:
+
+- vegetable scraps
+- battery
+- plastic bottle
+
+The image should show subtle technical bounding boxes:
+
+┌────────────────────────────┐
+│ Vegetable scraps → BIOGAS  │
+│ 94% CONFIDENCE             │
+└────────────────────────────┘
+
+and:
+
+┌────────────────────┐
+│ Battery            │
+│ SPECIAL HANDLING   │
+└────────────────────┘
+
+Use the reference image as inspiration.
+
+The highlight style should be:
+
+- thin lime/olive technical corners
+- small label
+- confidence percentage
+- class
+- restrained glow
+- dark translucent label background
+- tiny technical metadata
+
+Do NOT use giant colored rectangles over the image.
+
+The actual waste image must remain visible.
+
+---
+
+# 31. MULTI-OBJECT RESULT
+
+If the backend returns:
+
+items: [
+  Recyclable,
+  Biogas,
+  Non-Recyclable
+]
+
+the UI must show all detected objects.
+
+Example top-level result:
+
+3 OBJECTS DETECTED
+
+Then show:
+
+[ BIOGAS ]
+Vegetable scraps
+94%
+
+[ RECYCLABLE ]
+Plastic bottle
+91%
+
+[ NON-RECYCLABLE ]
+Wrapper
+88%
+
+The most important class should receive stronger visual emphasis.
+
+If `Biogas` is detected, make it the primary outcome panel:
+
+BIOGAS PATHWAY
+
+Organic waste detected
+→ Recovery
+→ Biogas
+→ Energy
+
+This is one of EcoLoop's strongest differentiators.
+
+---
+
+# 32. "REAL-TIME DATA INGESTION" DASHBOARD PANEL
+
+Add a premium technical panel somewhere in the dashboard.
+
+Title:
+
+REAL-TIME DATA INGESTION
+
+Inside, show:
+
+AI VISION
+● ACTIVE
+
+OBJECTS DETECTED
+03
+
+CLASSIFICATION
+LIVE
+
+CONFIDENCE
+94%
+
+DATA STREAM
+OPERATIONAL
+
+Use subtle telemetry-like labels.
+
+This is a visual simulation of the platform's intelligence layer.
+
+Do not falsely claim that actual sensors are connected unless they really are.
+
+Use wording such as:
+
+AI STREAM
+LIVE
+
+rather than:
+
+ESP32 CONNECTED
+
+unless hardware actually exists.
+
+---
+
+# 33. OPTIONAL FUTURE SENSOR PANEL
+
+If there is enough space, add a small "EDGE TELEMETRY" panel as a future/infrastructure visualization.
+
+Example:
+
+EDGE TELEMETRY
+
+FILL LEVEL       72%
+MASS             5.4 KG
+STATUS           NOMINAL
+STREAM           BIOGAS
+
+Mark it clearly as:
+
+SIMULATED TELEMETRY
+
+or:
+
+DEMO STREAM
+
+Do not imply physical sensor data is real.
+
+This panel should be secondary to the AI scan experience.
+
+---
+
+# 34. TECHNICAL HUD DETAILS
+
+Borrow the reference's subtle technical details:
+
+Examples:
+
+AI/VISION: 94.2
+STREAM: ECO-01
+LATENCY: 1.42s
+CLASSIFIER: ACTIVE
+DATA: INGESTING
+NODE: LOCAL
+
+Use tiny uppercase monospace text.
+
+Place these around panels sparingly.
+
+Do not fill the screen with random numbers.
+
+Every technical label should reinforce the feeling of an intelligent system.
+
+---
+
+# 35. IMAGE ANALYSIS SCREEN — MAKE THIS THE WOW MOMENT
+
+When analysis begins:
+
+Large image in the center.
+
+Around it:
+
+AI VISION / LIVE
+CLASSIFIER ACTIVE
+INGESTING IMAGE
+
+Then animate:
+
+1. Image appears
+2. subtle scan line moves across it
+3. object boxes appear
+4. labels resolve one by one
+5. confidence values appear
+6. classification cards slide in
+7. final impact calculation appears
+
+Example:
+
+ANALYZING...
+
+01 / OBJECT DETECTED
+02 / MATERIAL IDENTIFIED
+03 / WASTE STREAM RESOLVED
+04 / IMPACT CALCULATED
+
+This should feel like an intelligent computer-vision system.
+
+Keep animation around 1–2 seconds so the demo remains fast.
+
+---
+
+# 36. SENSOR / HARDWARE STORY — FUTURE EXPANSION ONLY
+
+The supplied reference shows an ESP32 + ultrasonic sensor + load cell + MQTT concept.
+
+We may eventually expand EcoLoop into:
+
+SMART BIN
+→ FILL LEVEL
+→ MASS
+→ AI WASTE CLASSIFICATION
+→ LIVE DATA INGESTION
+→ COLLECTION DEMAND
+→ ROUTE OPTIMIZATION
+
+For Round 1:
+
+DO NOT implement the hardware stack.
+
+Instead, make the UI architecture capable of showing it later.
+
+If time permits after the AI scan + dashboard + integration are perfect, we can create a small simulated telemetry demo.
+
+---
+
+# 37. VISUAL PRIORITY ORDER
+
+When deciding what to spend time on:
+
+1. AI image scanning
+2. Multi-object highlight boxes
+3. Biogas classification
+4. Beautiful result screen
+5. Dashboard metrics
+6. Real-time ingestion visual
+7. Impact visualization
+8. Community/leaderboard
+9. Simulated telemetry
+10. Future routing/truck UI
+
+Never sacrifice 1–5 for 9–10.
+
+---
+
+# 38. IMPORTANT — DO NOT OVERDO THE EFFECT
+
+The new technical look is an accent, NOT the entire design.
+
+Keep the original EcoLoop identity:
+
+NATURE × DATA × INTELLIGENCE
+
+Use:
+
+- botanical imagery
+- dark green atmosphere
+- glass panels
+- thin borders
+- lime highlights
+- technical labels
+
+But maintain large empty spaces and strong typography.
+
+The result should feel closer to a premium climate-tech command center than a cyberpunk dashboard.
+
+---
+
+# 39. BACKEND CONTRACT FOR HIGHLIGHTS
+
+When available, the frontend expects:
+
+{
+  "success": true,
+  "items": [
+    {
+      "item": "Vegetable scraps",
+      "material": "Organic matter",
+      "class": "Biogas",
+      "confidence": 94,
+      "disposal": "Organic / Biogas Feedstock",
+      "points": 15,
+      "waste_diverted_kg": 0.10,
+      "co2_saved_kg": 0.05,
+      "explanation": "...",
+      "box_2d": [210, 120, 680, 610]
+    }
+  ],
+  "summary": {
+    "total_items": 1,
+    "classes_detected": ["Biogas"],
+    "dominant_class": "Biogas"
+  }
+}
+
+If `box_2d` is missing, gracefully render the result without an overlay.
+
+Never let a missing bounding box break the scan flow.
+
+
+---
+
+# 29. VISUAL AI DETECTION OVERLAY — IMPORTANT
+
+The newly supplied EcoLoop reference image adds an important visual direction.
+
+Do not make the uploaded image a plain rectangular preview.
+
+The image-analysis experience should feel like a **real-time AI waste-classification camera system**.
+
+Reference characteristics to borrow:
+
+- thin lime/olive detection rectangles
+- four-corner technical brackets rather than heavy borders
+- small floating labels attached to detected objects
+- confidence percentages
+- tiny `REC` / `LIVE` indicator
+- tiny system telemetry labels
+- subtle scanning line
+- dark translucent image frame
+- lime highlight for active detection
+- small technical typography
+- restrained HUD/data visualization
+
+The effect should feel like:
+
+**AI COMPUTER VISION × ENVIRONMENTAL SENSOR × PREMIUM CLIMATE-TECH**
+
+NOT:
+
+- gaming HUD
+- sci-fi movie UI
+- excessive neon
+- cyberpunk
+- cartoon AR filters
+
+---
+
+# 30. IMAGE DETECTION VIEW
+
+When the user uploads an image, place it inside:
+
+`.detection-stage`
+
+Structure conceptually:
+
+```text
+┌──────────────────────────────────────────┐
+│ AI WASTE CLASSIFIER                  REC │
+│                                          │
+│      ┌───────────────┐                   │
+│      │ vegetable     │                   │
+│      │ scraps        │                   │
+│      └───────────────┘                   │
+│      BIOGAS · 94%                        │
+│                                          │
+│                    ┌────────┐            │
+│                    │ battery│            │
+│                    └────────┘            │
+│                    E-WASTE · 91%         │
+│                                          │
+│  AI ACTIVE                    1.45s      │
+└──────────────────────────────────────────┘
+```
+
+The actual uploaded image should remain visible underneath.
+
+---
+
+# 31. GEMINI BOUNDING BOX RENDERING
+
+The backend returns Gemini's documented normalized coordinates:
+
+```text
+box_2d = [ymin, xmin, ymax, xmax]
+```
+
+where values are normalized from `0–1000`. citeturn0search0turn0search2
+
+Convert them into CSS percentages:
+
+```javascript
+const [ymin, xmin, ymax, xmax] = item.box_2d;
+
+const top = ymin / 10;
+const left = xmin / 10;
+const width = (xmax - xmin) / 10;
+const height = (ymax - ymin) / 10;
+```
+
+Then create an absolutely positioned detection box:
+
+```text
+position: absolute
+top: `${top}%`
+left: `${left}%`
+width: `${width}%`
+height: `${height}%`
+```
+
+IMPORTANT:
+The image and detection overlay must use the same containing element and the same rendered aspect ratio.
+
+Do NOT use arbitrary pixel coordinates.
+
+Use percentage coordinates so the boxes remain aligned when the image is resized.
+
+---
+
+# 32. DETECTION BOX DESIGN
+
+Do not use a normal thick rectangular border.
+
+Build a technical corner-bracket effect using CSS pseudo-elements or nested elements.
+
+Example visual hierarchy:
+
+```text
+       ┌───────────────┐
+       │               │
+       │   WASTE ITEM  │
+       │               │
+       └───────────────┘
+```
+
+But only the corners should be strongly visible.
+
+Use:
+- 1–2px lime lines
+- short corner segments
+- subtle glow
+- transparent center
+- small label badge
+
+The box should animate in when detection finishes.
+
+---
+
+# 33. CLASS-SPECIFIC HIGHLIGHTING
+
+Keep the palette restrained.
+
+Suggested mapping:
+
+`Biogas`
+→ lime/green highlight
+
+`Recyclable`
+→ yellow-lime highlight
+
+`Non-Recyclable`
+→ muted warm/grey highlight
+
+`E-Waste/Hazardous`
+→ controlled amber/red accent
+
+`Others`
+→ muted grey
+
+Do NOT turn the entire screen into multiple colors.
+
+The primary EcoLoop visual identity should remain dark + ivory + lime.
+
+---
+
+# 34. FLOATING DETECTION LABEL
+
+Each detected item should have a compact label:
+
+```text
+Vegetable scraps
+BIOGAS · 94%
+```
+
+or:
+
+```text
+Plastic bottle
+RECYCLABLE · 96%
+```
+
+Position the label near the top of the corresponding box.
+
+If the box is too close to the top edge, automatically place the label inside/below the box so it stays visible.
+
+If multiple labels overlap:
+- intelligently offset them
+- or place a compact list on the right
+- never allow labels to become unreadable
+
+---
+
+# 35. SCANNING ANIMATION
+
+Before results appear:
+
+1. Display uploaded image.
+2. Add subtle moving horizontal scan line.
+3. Show:
+
+`AI WASTE CLASSIFIER`
+
+4. Show small telemetry:
+
+`OBJECT DETECTION ACTIVE`
+
+`MATERIAL ANALYSIS`
+
+`STREAM CLASSIFICATION`
+
+5. Reveal detection boxes one-by-one.
+6. Reveal labels.
+7. Reveal confidence.
+8. Show final classification summary.
+
+Keep total animation around 1–2 seconds.
+
+It should feel fast and intelligent, not like the user is waiting for a fake loading screen.
+
+---
+
+# 36. DETECTION SUMMARY
+
+After the boxes appear, show a compact panel:
+
+```text
+DETECTION SUMMARY
+
+03 OBJECTS DETECTED
+
+01  BIOGAS
+01  RECYCLABLE
+01  E-WASTE
+```
+
+Then:
+
+```text
+PRIMARY RECOVERY PATH
+BIOGAS
+```
+
+This makes the multi-class capability immediately visible to judges.
+
+---
+
+# 37. REFERENCE IMAGE STYLE DETAILS
+
+The new reference should influence the frontend in these specific ways:
+
+### Large typography
+Keep the strong oversized page titles.
+
+### Technical coordinates
+Add tiny labels such as:
+
+`H/W_FLW: 39.52 · -87.85`
+
+`S/N_FLW: 48.12 · -85.15`
+
+These are decorative telemetry only. Do not pretend they are real GPS/sensor values.
+
+Better alternatives:
+
+`AI_SCAN: 01.42s`
+
+`VISION_STATUS: ACTIVE`
+
+`OBJECTS: 03`
+
+### System labels
+
+Use tiny uppercase text:
+
+`ECOLOOP VISION`
+
+`AI WASTE CLASSIFIER`
+
+`SYSTEM STATUS: OPERATIONAL`
+
+### Image panels
+
+Use large rounded-but-not-overly-rounded glass panels with thin borders.
+
+### Bottom technical status
+
+Use small telemetry such as:
+
+`MODEL: GEMINI VISION`
+
+`LATENCY: 1.45s`
+
+`DATA FLOW: LIVE`
+
+Only show real latency if we measure it. Otherwise use clearly demo-oriented UI text.
+
+---
+
+# 38. DO NOT OVERDESIGN
+
+The reference looks sophisticated because it has restraint.
+
+Therefore:
+
+- large typography
+- few strong panels
+- lots of negative space
+- subtle borders
+- limited accent color
+- controlled animation
+
+Do not add:
+- dozens of cards
+- huge neon glows
+- random floating particles
+- excessive gradients
+- unnecessary 3D elements
+- noisy dashboards
+
+---
+
+# 39. CAMERA-STYLE MODE
+
+If time permits after the upload flow works, make the scan panel look like a camera viewport.
+
+Possible top status:
+
+`● REC`
+
+Possible bottom controls:
+
+`CAPTURE`
+
+`ANALYZE`
+
+But image upload remains the reliable Round-1 fallback.
+
+---
+
+# 40. MULTI-OBJECT RESULT UI
+
+The frontend must NOT assume there is only one item.
+
+Loop through:
+
+```javascript
+result.items
+```
+
+For every item:
+- render a bounding box if `box_2d` exists
+- render a detection label
+- render class
+- render confidence
+- render result card
+
+The dashboard should summarize all detected classes.
+
+Example:
+
+```text
+3 OBJECTS DETECTED
+
+BIOGAS          01
+RECYCLABLE      01
+E-WASTE         01
+```
+
+This is a key feature and should be visible in the demo.
+
+---
+
+# 41. FUTURE ROUTING VISUALIZATION
+
+Do not implement the actual routing engine yet.
+
+However, structure the frontend so a future page can display:
+
+```text
+COLLECTION INTELLIGENCE
+
+ZONE A
+────────────────────────
+
+BIOGAS
+420 kg
+
+COLLECTION POINTS
+12
+
+TRUCKS REQUIRED
+2
+
+PRIORITY
+HIGH
+
+[ OPTIMIZE ROUTE ]
+```
+
+This can later become the bridge from:
+
+AI CLASSIFICATION
+→ WASTE AGGREGATION
+→ TRUCK PLANNING
+→ ROUTE OPTIMIZATION
+
+Only build this if the Round-1 core is complete.
+
+---
+
+# 42. DEMO WOW MOMENT
+
+The ideal judge-facing sequence is:
+
+1. Upload an image containing multiple types of waste.
+2. Image appears in the dark camera-style frame.
+3. `AI WASTE CLASSIFIER` appears.
+4. Scan line moves across the image.
+5. 2–4 detection boxes appear.
+6. Each object gets a small label.
+7. One of them prominently shows:
+
+`BIOGAS · 94%`
+
+8. Summary appears:
+
+`03 OBJECTS DETECTED`
+
+9. EcoPoints animate upward.
+10. Impact numbers update.
+11. Dashboard shows the measurable outcome.
+
+This should be the centerpiece of the prototype.
+
+---
+
+# 43. TECHNICAL IMPLEMENTATION RULE
+
+Do not create a separate computer-vision model merely to draw boxes.
+
+Gemini already provides documented normalized bounding boxes for object detection. citeturn0search0turn0search11
+
+Use Gemini's coordinates.
+
+If bounding boxes are unavailable for a particular model/API configuration:
+- do not fake them
+- fall back to classification cards
+- keep the architecture ready for `box_2d`
+- test with the configured Gemini model before adding fallback complexity
+
+The bounding box feature is a visual enhancement, not a reason to destabilize the core scan flow.

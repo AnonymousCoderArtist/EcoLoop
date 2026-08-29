@@ -127,42 +127,100 @@ Do not hardcode the model name in multiple files.
 
 The Gemini prompt must make the model behave like **EcoLoop Waste Intelligence**.
 
-Analyze the primary waste item visible in the image.
+Analyze ALL clearly visible waste items in the image, not just one item.
 
-Return structured JSON with:
+EcoLoop is intentionally a MULTI-CLASS waste intelligence system. One uploaded image may contain one item or several different waste items.
+
+For example, an image could contain:
+- plastic bottle → Recyclable
+- banana peel → Biogas
+- dirty multilayer wrapper → Non-Recyclable
+- broken electronic device → E-Waste/Hazardous
+- unclear miscellaneous object → Others
+
+Return a structured JSON response containing an `items` array.
+
+Primary EcoLoop classes for Round 1:
+
+1. `Recyclable`
+   Examples: PET bottles, clean paper/cardboard, metal cans, glass bottles, clean recyclable packaging.
+
+2. `Biogas`
+   This is the MOST IMPORTANT class.
+   Use this for biodegradable/wet organic waste that is suitable for an organic-waste/biogas pathway.
+   Examples: food scraps, vegetable/fruit waste, kitchen waste, many biodegradable food residues.
+   The system should clearly surface this class in the UI because it is a key differentiator of EcoLoop.
+
+3. `Non-Recyclable`
+   Examples: heavily contaminated packaging, certain multilayer wrappers, contaminated mixed waste, items that cannot reasonably enter the recyclable/organic stream.
+
+4. `Others`
+   Use when an item does not confidently fit the supported operational streams.
+
+5. `E-Waste/Hazardous`
+   Use this optional fifth class for electronics, batteries, bulbs, chemicals, medical/domestic hazardous items, etc. This class should be treated as a special handling stream rather than normal recyclable waste.
+
+If an image contains multiple items, return one entry per clearly identifiable item.
+
+Example:
 
 {
-  "item": "Plastic bottle",
-  "material": "PET plastic",
-  "category": "Recyclable",
-  "confidence": 94,
-  "disposal": "Dry/Recyclable Waste",
-  "points": 10,
-  "waste_diverted_kg": 0.02,
-  "co2_saved_kg": 0.08,
-  "explanation": "Short human-readable explanation."
+  "success": true,
+  "items": [
+    {
+      "item": "Plastic bottle",
+      "material": "PET plastic",
+      "class": "Recyclable",
+      "confidence": 94,
+      "disposal": "Recyclable / Dry Waste",
+      "points": 10
+    },
+    {
+      "item": "Vegetable scraps",
+      "material": "Biodegradable organic matter",
+      "class": "Biogas",
+      "confidence": 96,
+      "disposal": "Organic / Biogas Feedstock",
+      "points": 15
+    }
+  ],
+  "summary": {
+    "total_items": 2,
+    "classes_detected": ["Recyclable", "Biogas"],
+    "dominant_class": "Biogas"
+  }
 }
 
-Allowed categories:
+IMPORTANT BIOGAS RULE:
+Do not classify something as Biogas merely because it is biodegradable in a broad sense. The class means the item is reasonably suitable for the EcoLoop organic/biogas pathway. If uncertain, use Others or explain the uncertainty.
 
-- Organic
-- Recyclable
-- Compostable
-- E-Waste
-- Hazardous
-- General Waste
-- Unknown
+For each item return:
+- item
+- material
+- class
+- confidence (0-100)
+- disposal
+- points
+- waste_diverted_kg
+- co2_saved_kg
+- short explanation
+
+If bounding boxes are practical with the selected Gemini capability, optionally return:
+- box_2d: [ymin, xmin, ymax, xmax], normalized 0-1000
+
+This can later allow the frontend to draw labels around individual waste objects. Do not make bounding boxes a blocker for the Round-1 build.
+
+Use Gemini structured JSON output / schema validation where supported rather than relying only on free-form text parsing. Gemini officially supports structured outputs and object detection/segmentation for image understanding. citeturn0search0turn0search2
 
 Important:
-
 - Never claim certainty when the image is unclear.
-- If confidence is low, return `Unknown` or explain uncertainty.
-- Do not invent precise material information that cannot reasonably be inferred.
-- Keep the explanation short.
-- Keep the response suitable for displaying directly in a UI.
-- The backend must validate/sanitize the model response before returning it.
-
-If Gemini returns malformed JSON, attempt a safe extraction/parse strategy. If that still fails, return a structured API error rather than crashing.
+- Do not invent precise material information.
+- Do not force every object into a supported class.
+- Keep explanations short.
+- Validate every returned class against the allowed enum.
+- Validate confidence is 0-100.
+- Sanitize all model output before returning it to the frontend.
+- If Gemini returns malformed output, return a clean structured API error rather than crashing.
 
 ---
 
@@ -263,16 +321,23 @@ Return HTTP 200:
 
 {
   "success": true,
-  "result": {
-    "item": "...",
-    "material": "...",
-    "category": "...",
-    "confidence": 94,
-    "disposal": "...",
-    "points": 10,
-    "waste_diverted_kg": 0.02,
-    "co2_saved_kg": 0.08,
-    "explanation": "..."
+  "items": [
+    {
+      "item": "...",
+      "material": "...",
+      "class": "Biogas",
+      "confidence": 96,
+      "disposal": "Organic / Biogas Feedstock",
+      "points": 15,
+      "waste_diverted_kg": 0.10,
+      "co2_saved_kg": 0.05,
+      "explanation": "..."
+    }
+  ],
+  "summary": {
+    "total_items": 1,
+    "classes_detected": ["Biogas"],
+    "dominant_class": "Biogas"
   }
 }
 
@@ -417,9 +482,14 @@ Before declaring complete:
 10. `docs/API.md` matches the actual implementation.
 
 Test at least:
-- plastic bottle
-- banana peel/organic waste
-- aluminum can
+- plastic bottle → Recyclable
+- banana/vegetable/food waste → Biogas
+- aluminum can → Recyclable
+- dirty multilayer wrapper → Non-Recyclable
+- an ambiguous/miscellaneous object → Others
+- an image containing MULTIPLE waste types in one frame
+
+The multiple-waste image test is important: the API must return multiple `items`, not collapse the image into one classification.
 
 Do not fake successful Gemini results when the real API is configured.
 
@@ -519,3 +589,294 @@ At the end, report:
 - anything the frontend developer must know
 
 Keep the implementation simple and production-clean enough for a hackathon prototype.
+
+
+---
+
+# 20. FUTURE PHASE — COLLECTION ROUTING / TRUCK OPTIMIZATION
+
+Do NOT implement this before the core multi-class Gemini pipeline is stable.
+
+EcoLoop can later expand from "what is this waste?" to "where should it go and how should it be collected?"
+
+Possible Phase 2 flow:
+
+AI classification
+→ waste stream
+→ locality / pickup point
+→ accumulated quantity
+→ collection priority
+→ route optimization
+→ number/type of trucks required
+→ driver/collector route
+
+Potential future backend endpoints:
+
+GET /api/collection/summary
+POST /api/collection/route
+GET /api/collection/routes
+GET /api/collection/trucks
+
+Future route data may include:
+
+{
+  "zone": "Zone A",
+  "stream": "Biogas",
+  "estimated_kg": 420,
+  "pickup_points": 12,
+  "truck_type": "Organic Waste Carrier",
+  "trucks_required": 2,
+  "priority": "High",
+  "route": [...]
+}
+
+This is intentionally deferred.
+
+When the core prototype is complete and there is spare time, implement a simple demo routing layer using static/mock locality data and a straightforward heuristic. Do NOT attempt a production GIS/vehicle-routing system during Round 1.
+
+The long-term product idea is:
+
+CLASSIFY → AGGREGATE → ROUTE → COLLECT → RECOVER → MEASURE IMPACT
+
+
+---
+
+# 21. VISUAL INTELLIGENCE DATA FOR THE FRONTEND
+
+The frontend will use the AI result to create a visual "real-time ingestion" experience inspired by the supplied EcoLoop reference.
+
+The backend should therefore preserve optional object-level data when Gemini provides it.
+
+For each detected object, support:
+
+- `item`
+- `material`
+- `class`
+- `confidence`
+- `disposal`
+- `points`
+- `waste_diverted_kg`
+- `co2_saved_kg`
+- `explanation`
+- optional `box_2d`
+
+`box_2d` format:
+
+[ymin, xmin, ymax, xmax]
+
+Coordinates are normalized to 0–1000.
+
+Gemini's current image-understanding documentation supports object detection with normalized bounding boxes, so use this capability where supported. citeturn0search4
+
+The frontend can then draw technical highlight boxes around detected waste.
+
+Example:
+
+{
+  "item": "Vegetable scraps",
+  "class": "Biogas",
+  "confidence": 94,
+  "box_2d": [210, 120, 680, 610]
+}
+
+The backend MUST NOT fail if `box_2d` is unavailable.
+
+Bounding boxes are an enhancement, not a blocker.
+
+---
+
+# 22. FUTURE REAL-TIME INGESTION DATA
+
+The reference design also shows a future hardware/telemetry layer.
+
+Do NOT build ESP32/MQTT/hardware integration in Round 1 unless the core AI pipeline is already finished.
+
+However, keep the architecture extensible for future fields such as:
+
+{
+  "telemetry": {
+    "fill_percent": 72,
+    "mass_kg": 5.4,
+    "temperature_c": 21,
+    "timestamp": "..."
+  }
+}
+
+Future architecture:
+
+EDGE SENSOR
+→ MQTT
+→ ECOLOOP INGESTION API
+→ WASTE STREAM AGGREGATION
+→ ROUTING / TRUCK OPTIMIZATION
+
+For now, this is only a documented future direction.
+
+Do not add MQTT dependencies just for the sake of the visual.
+
+
+---
+
+# 21. VISUAL INTELLIGENCE DATA — BOUNDING BOXES ARE REQUIRED IF RELIABLE
+
+The frontend wants to create a visual "AI detection" experience similar to the EcoLoop reference:
+- thin lime detection rectangles
+- corner brackets
+- object labels attached to the rectangle
+- class badges
+- confidence percentage
+- small REC / LIVE / AI status indicators
+
+Gemini officially supports object detection with bounding boxes. Its documented format is:
+
+`box_2d: [ymin, xmin, ymax, xmax]`
+
+with every coordinate normalized to the range `0–1000`. The backend must convert these coordinates to the frontend-friendly form without losing precision. citeturn0search0turn0search2
+
+For every confidently detected waste object, return:
+
+```json
+{
+  "box_2d": [ymin, xmin, ymax, xmax],
+  "label": "Vegetable scraps",
+  "class": "Biogas",
+  "confidence": 94
+}
+```
+
+The frontend can convert to percentages:
+
+```text
+top    = ymin / 10 %
+left   = xmin / 10 %
+bottom = ymax / 10 %
+right  = xmax / 10 %
+```
+
+Example:
+
+```text
+box_2d = [220, 140, 650, 710]
+
+top    = 22%
+left   = 14%
+height = 43%
+width  = 57%
+```
+
+Return the coordinates relative to the ORIGINAL uploaded image dimensions, following Gemini's documented 0–1000 coordinate convention.
+
+IMPORTANT:
+- Never fabricate coordinates.
+- Do not return a box if the object cannot be localized reasonably.
+- A slightly loose box is preferable to a confidently wrong precise box.
+- Validate every coordinate is an integer from 0 to 1000.
+- Validate `ymin < ymax` and `xmin < xmax`.
+- Clamp out-of-range values.
+- If multiple objects overlap, return separate boxes.
+- Do not let bounding-box failure break classification. If detection succeeds but localization fails, return the item without a box.
+
+---
+
+# 22. OPTIONAL SEGMENTATION MASK
+
+If the selected Gemini model/API path reliably supports segmentation, optionally return:
+
+```json
+"mask": [[x1,y1], [x2,y2], [x3,y3]]
+```
+
+with polygon coordinates normalized to 0–1000.
+
+This can later create an even more advanced glowing contour around waste objects.
+
+DO NOT make segmentation a Round-1 blocker.
+
+Bounding boxes are the priority.
+
+---
+
+# 23. RECOMMENDED API RESULT SHAPE FOR VISUAL SCANNING
+
+The preferred result is:
+
+```json
+{
+  "success": true,
+  "items": [
+    {
+      "item": "Vegetable scraps",
+      "material": "Biodegradable organic waste",
+      "class": "Biogas",
+      "confidence": 94,
+      "disposal": "Organic / Biogas Feedstock",
+      "points": 15,
+      "waste_diverted_kg": 0.10,
+      "co2_saved_kg": 0.05,
+      "explanation": "Suitable for the EcoLoop organic recovery pathway.",
+      "box_2d": [220, 140, 650, 710]
+    }
+  ],
+  "summary": {
+    "total_items": 1,
+    "classes_detected": ["Biogas"],
+    "dominant_class": "Biogas"
+  }
+}
+```
+
+The backend should preserve the original image dimensions in the response if useful:
+
+```json
+"image": {
+  "width": 1706,
+  "height": 959
+}
+```
+
+This is optional because the frontend can also read the dimensions from the uploaded image.
+
+---
+
+# 24. AI DETECTION PROMPT BEHAVIOR
+
+Ask Gemini to:
+
+1. Detect all prominent waste objects.
+2. Identify the object.
+3. Assign exactly one EcoLoop operational class.
+4. Determine confidence.
+5. Return a bounding box for each object.
+6. Avoid duplicate boxes for the same object.
+7. Ignore irrelevant background objects such as plants, tables, hands, people, phones, walls, etc.
+8. Focus on waste/material objects.
+9. Prefer the Biogas class for clearly identifiable organic food/kitchen waste suitable for the organic recovery pathway.
+10. Return `Others` when the object cannot confidently fit the operational streams.
+
+Suggested instruction:
+
+"Detect all prominent waste objects in the uploaded image. Ignore people, hands, furniture, background scenery and non-waste objects. For each waste object, identify its material and assign exactly one EcoLoop class: Recyclable, Biogas, Non-Recyclable, E-Waste/Hazardous, or Others. Return a [ymin,xmin,ymax,xmax] bounding box normalized to 0-1000 for every localized object. Do not invent objects or boxes."
+
+Use structured JSON output/schema where supported so the backend receives predictable fields. Gemini documents JSON schema structured outputs for this purpose. citeturn0search7
+
+---
+
+# 25. ROUND-1 VISUAL DETECTION PRIORITY
+
+The desired demo is:
+
+UPLOAD IMAGE
+        ↓
+"AI WASTE CLASSIFIER"
+        ↓
+DETECTION SCAN
+        ↓
+BOX 1 → Vegetable scraps → BIOGAS 94%
+BOX 2 → Battery → E-WASTE 91%
+BOX 3 → Bottle → RECYCLABLE 96%
+        ↓
+CLASSIFICATION SUMMARY
+        ↓
+ECOPOINTS + IMPACT
+
+This should be treated as one of the highest-value backend features after basic classification.

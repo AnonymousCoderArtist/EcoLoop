@@ -1,1 +1,330 @@
-pass
+"""
+EcoLoop Gemini Waste Intelligence Service.
+
+Handles:
+- Gemini client init & graceful missing-key errors
+- Multi-class waste prompt with bounding boxes
+- Structured JSON parsing with fallbacks
+- Sanitization via schemas helpers
+"""
+
+from __future__ import annotations
+
+import base64
+import json
+import logging
+import mimetypes
+import re
+import traceback
+from io import BytesIO
+from typing import Any
+
+from PIL import Image
+
+# Support both `python backend/app.py` and `uv run` / package imports
+try:
+    from config import GEMINI_API_KEY, GEMINI_MODEL  # type: ignore
+    from schemas import build_summary, sanitize_item  # type: ignore
+except ImportError:
+    from backend.config import GEMINI_API_KEY, GEMINI_MODEL  # type: ignore
+    from backend.schemas import build_summary, sanitize_item  # type: ignore
+
+logger = logging.getLogger(__name__)
+
+# ── EcoLoop System Prompt ──────────────────────────────────────────
+
+ECOLOOP_SYSTEM_PROMPT = """You are EcoLoop Waste Intelligence — a precise, honest waste-material classifier for the EcoLoop outcome-based waste behaviour platform.
+
+TASK:
+Detect ALL clearly visible waste items in the uploaded image. This is a MULTI-CLASS detection task. One image may contain multiple different waste items (e.g., plastic bottle + banana peel + battery in one frame). Return one entry per distinct waste object.
+
+ECO-LOOP CLASSES (assign exactly one per item):
+1. "Recyclable" — clean paper/cardboard, PET bottles, metal cans, glass bottles, clean recyclable packaging.
+2. "Biogas" — MOST IMPORTANT CLASS. Use ONLY for biodegradable/wet organic waste suitable for the organic-waste/biogas pathway: food scraps, vegetable/fruit waste, kitchen waste, biodegradable food residues. Do NOT use Biogas merely because something is biodegradable in general; it must be suitable for the biogas pathway. If uncertain, use Others.
+3. "Non-Recyclable" — heavily contaminated packaging, multilayer wrappers, contaminated mixed waste that cannot reasonably enter recyclable/organic streams.
+4. "Others" — item does not confidently fit the supported operational streams or is unclear.
+5. "E-Waste/Hazardous" — electronics, batteries, bulbs, chemicals, medical/domestic hazardous items. Special handling stream.
+
+RULES:
+- Analyse every clearly visible waste item, not just one.
+- Ignore people, hands, furniture, plants, walls, phones, background non-waste objects. Focus ONLY on waste/material objects.
+- Never claim certainty when image is unclear. Keep explanations short (one sentence).
+- Do not invent precise material info. If unsure, say so.
+- For each item return: item (short name), material, class, confidence (0-100 integer), disposal (use: "Recyclable / Dry Waste" for Recyclable, "Organic / Biogas Feedstock" for Biogas, "Non-Recyclable / Landfill (Last Resort)" for Non-Recyclable, "Others / Manual Sorting Required" for Others, "E-Waste / Hazardous - Special Handling" for E-Waste/Hazardous), points (Recyclable 10, Biogas 15, Non-Recyclable 5, Others 0, E-Waste/Hazardous 25), waste_diverted_kg & co2_saved_kg (use conservative demo values: Recyclable 0.02/0.08, Biogas 0.10/0.05, E-Waste/Hazardous 0.15/0.20, others 0/0), explanation.
+- Prefer Biogas for clearly identifiable organic food/kitchen waste suitable for organic recovery.
+- For every confidently localized waste object, return bounding box "box_2d": [ymin, xmin, ymax, xmax] normalized to 0-1000 (Gemini 0-1000 convention, relative to original image). Do NOT invent boxes. Slightly loose box is better than precisely wrong. Omit box if cannot localize. Validate ymin < ymax and xmin < xmax. Do not duplicate boxes for same object.
+- Return structured JSON only.
+
+OUTPUT JSON SHAPE:
+{
+  "items": [
+    {
+      "item": "Plastic bottle",
+      "material": "PET plastic",
+      "class": "Recyclable",
+      "confidence": 94,
+      "disposal": "Recyclable / Dry Waste",
+      "points": 10,
+      "waste_diverted_kg": 0.02,
+      "co2_saved_kg": 0.08,
+      "explanation": "Clean PET bottle suitable for dry waste recycling.",
+      "box_2d": [120, 200, 800, 600]
+    }
+  ]
+}
+
+If image contains no waste or is unclear, return {"items": []} with empty array. Never return free-form text outside JSON.
+"""
+
+# JSON schema hint for model — used in structured output where supported
+RESPONSE_JSON_SCHEMA_HINT = """Respond with valid JSON matching this TypeScript type:
+{
+  items: Array<{
+    item: string;
+    material: string;
+    class: "Recyclable" | "Biogas" | "Non-Recyclable" | "Others" | "E-Waste/Hazardous";
+    confidence: number; // 0-100
+    disposal: string;
+    points: number;
+    waste_diverted_kg: number;
+    co2_saved_kg: number;
+    explanation: string;
+    box_2d?: [number, number, number, number];
+  }>
+}
+"""
+
+# ── Helpers ──────────────────────────────────────────────────────────
+
+def _get_client():
+    """Create Gemini client or raise clean error if key missing."""
+    if not GEMINI_API_KEY:
+        raise RuntimeError(
+            "GEMINI_API_KEY is not set. Create backend/.env with GEMINI_API_KEY=your_key (see .env.example)."
+        )
+    try:
+        from google import genai
+
+        return genai.Client(api_key=GEMINI_API_KEY)
+    except ImportError as e:
+        raise RuntimeError(
+            "google-genai is not installed. Run: uv pip install -r backend/requirements.txt"
+        ) from e
+
+
+def _extract_json(text: str) -> dict[str, Any]:
+    """Robustly extract JSON from model output (handles markdown fences, extra text)."""
+    if not text or not text.strip():
+        raise ValueError("Empty model response")
+    text = text.strip()
+    # Strip markdown code fences
+    fence_match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", text, re.IGNORECASE)
+    if fence_match:
+        text = fence_match.group(1).strip()
+    # Try direct parse
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # Try find outermost { ... }
+    start = text.find("{")
+    end = text.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        candidate = text[start : end + 1]
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            pass
+    raise ValueError(f"Model returned malformed JSON: {text[:800]}")
+
+
+def _image_part_bytes(image_bytes: bytes, mime_type: str) -> dict[str, Any]:
+    """Build image part for google-genai. Try new SDK format."""
+    # google-genai expects types.Part.from_bytes or inline_data
+    # We'll return a dict that caller can adapt; simpler: use PIL + base64 approach
+    return {"mime_type": mime_type, "data": image_bytes}
+
+
+# ── Public API ───────────────────────────────────────────────────────
+
+def analyze_image(
+    image_bytes: bytes,
+    mime_type: str = "image/jpeg",
+    original_width: int | None = None,
+    original_height: int | None = None,
+) -> dict[str, Any]:
+    """
+    Send image to Gemini and return sanitized EcoLoop result.
+
+    Returns dict with keys: success, items, summary, image (optional), model
+    On Gemini error, raises RuntimeError / ValueError with clean message.
+    """
+    client = _get_client()
+
+    # Prepare prompt with schema hint
+    full_prompt = ECOLOOP_SYSTEM_PROMPT + "\n\n" + RESPONSE_JSON_SCHEMA_HINT
+
+    # Determine image MIME if generic
+    if mime_type == "application/octet-stream":
+        mime_type = "image/jpeg"
+
+    # Build content parts — handle SDK variations gracefully
+    # google-genai 1.x: client.models.generate_content(model=..., contents=[Part...])
+    # We'll use the most compatible path: base64 + Pillow not needed; SDK handles bytes.
+
+    try:
+        from google.genai import types
+
+        image_part = types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
+
+        # Try structured output via response_schema where supported
+        # Fallback to plain text JSON if schema not supported by model
+        config = None
+        try:
+            # Attempt to use JSON schema for stricter output
+            schema = {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "item": {"type": "string"},
+                                "material": {"type": "string"},
+                                "class": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Recyclable",
+                                        "Biogas",
+                                        "Non-Recyclable",
+                                        "Others",
+                                        "E-Waste/Hazardous",
+                                    ],
+                                },
+                                "confidence": {"type": "integer"},
+                                "disposal": {"type": "string"},
+                                "points": {"type": "integer"},
+                                "waste_diverted_kg": {"type": "number"},
+                                "co2_saved_kg": {"type": "number"},
+                                "explanation": {"type": "string"},
+                                "box_2d": {
+                                    "type": "array",
+                                    "items": {"type": "integer"},
+                                    "minItems": 4,
+                                    "maxItems": 4,
+                                },
+                            },
+                            "required": [
+                                "item",
+                                "material",
+                                "class",
+                                "confidence",
+                                "disposal",
+                                "points",
+                                "waste_diverted_kg",
+                                "co2_saved_kg",
+                                "explanation",
+                            ],
+                        },
+                    }
+                },
+                "required": ["items"],
+            }
+            config = types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_json_schema=schema,
+                temperature=0.2,
+            )
+        except Exception:
+            # Older SDK may not support response_json_schema
+            try:
+                config = types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.2,
+                )
+            except Exception:
+                config = None
+
+        # Call model
+        if config is not None:
+            response = client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=[image_part, full_prompt],
+                config=config,
+            )
+        else:
+            response = client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=[image_part, full_prompt],
+            )
+
+        # Extract text
+        text = getattr(response, "text", None)
+        if not text:
+            # Try candidates
+            try:
+                text = response.candidates[0].content.parts[0].text  # type: ignore
+            except Exception:
+                text = str(response)
+
+        parsed = _extract_json(text or "")
+
+    except RuntimeError:
+        raise
+    except Exception as e:
+        logger.error("Gemini call failed: %s\n%s", e, traceback.format_exc())
+        # Re-raise as clean error for API layer
+        msg = str(e)
+        # Map common errors to user-friendly messages
+        if "API_KEY" in msg or "API key" in msg or "PERMISSION_DENIED" in msg:
+            raise RuntimeError(f"Gemini API key error: {msg}") from e
+        if "quota" in msg.lower() or "rate" in msg.lower() or "RESOURCE_EXHAUSTED" in msg:
+            raise RuntimeError("Gemini is temporarily rate-limited. Please retry in a moment.") from e
+        if "SAFETY" in msg or "blocked" in msg.lower():
+            raise RuntimeError("Image was blocked by safety filters. Try a different image.") from e
+        raise RuntimeError(f"Gemini analysis failed: {msg}") from e
+
+    # ── Sanitize model output ──────────────────────────────────────
+    raw_items = parsed.get("items")
+    if raw_items is None:
+        # Model may have returned top-level array or different key
+        if isinstance(parsed, list):
+            raw_items = parsed
+        else:
+            raw_items = []
+
+    if not isinstance(raw_items, list):
+        raw_items = []
+
+    sanitized = []
+    for raw in raw_items:
+        if not isinstance(raw, dict):
+            continue
+        try:
+            sanitized.append(sanitize_item(raw))
+        except Exception as e:
+            logger.warning("Skipping invalid item %s: %s", raw, e)
+            continue
+
+    summary = build_summary(sanitized)
+
+    result: dict[str, Any] = {
+        "success": True,
+        "items": sanitized,
+        "summary": summary,
+        "model": GEMINI_MODEL,
+    }
+    if original_width and original_height:
+        result["image"] = {"width": original_width, "height": original_height}
+
+    return result
+
+
+def check_api_key() -> tuple[bool, str]:
+    """Return (ok, message) for health checks."""
+    if not GEMINI_API_KEY:
+        return False, "GEMINI_API_KEY is not set"
+    if len(GEMINI_API_KEY.strip()) < 10:
+        return False, "GEMINI_API_KEY looks invalid (too short)"
+    return True, "ok"

@@ -16,6 +16,8 @@
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  overflow-y: auto;
+  height: auto;
 }
 
 body {
@@ -24,6 +26,14 @@ body {
   line-height: 1.2;
   letter-spacing: -0.01em;
   overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100vh;
+}
+
+#app {
+  min-height: 100vh;
+  overflow: visible;
 }
 
 ::-webkit-scrollbar { width: 4px; }
@@ -37,10 +47,14 @@ body {
   display: none;
   min-height: 100vh;
   animation: fadeIn 0.4s ease;
+  overflow: visible;
+  height: auto;
 }
 
 .page.active {
   display: block;
+  overflow: visible;
+  height: auto;
 }
 
 @keyframes fadeIn {
@@ -184,15 +198,18 @@ body {
   position: relative;
   width: 100%;
   height: 100dvh;
+  min-height: 600px;
   background: var(--black);
+  overflow: visible;
 }
 
 .hero-bg {
   position: absolute;
   inset: 0;
   z-index: 10;
-  background: url('./background 2.png') center/cover no-repeat;
+  background: url('./hero-bg.png') center/cover no-repeat, url('./background 2.png') center/cover no-repeat;
   transform: scale(1.12);
+  filter: brightness(0.62) saturate(0.9);
 }
 
 .hero-bg.hero-zoom {
@@ -205,6 +222,7 @@ body {
   z-index: 20;
   background: url('./foreground.png') center/cover no-repeat;
   pointer-events: none;
+  filter: brightness(0.60) saturate(0.9);
 }
 
 .hero-reveal {
@@ -212,6 +230,16 @@ body {
   inset: 0;
   z-index: 30;
   background: url('./background 1.png') center/cover no-repeat;
+  pointer-events: none;
+  filter: brightness(0.60) saturate(0.9);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.68) 0%, rgba(8,8,8,0.38) 42%, rgba(8,8,8,0.08) 68%, transparent 85%);
   pointer-events: none;
 }
 
@@ -226,6 +254,7 @@ body {
   padding: 0 2rem;
   height: 100%;
   pointer-events: none;
+  text-shadow: 0 2px 18px rgba(0,0,0,0.75), 0 1px 4px rgba(0,0,0,0.9);
 }
 
 .hero-title {
@@ -286,6 +315,93 @@ body {
   width: 1px;
   height: 40px;
   background: linear-gradient(to bottom, var(--grey), transparent);
+}
+
+/* Landing scroll sections — images cover, subtle grey-transparent to transparent so text visible */
+.landing-section {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid var(--border);
+  background-color: #080808;
+}
+.landing-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(8,8,8,0.64) 0%, rgba(8,8,8,0.42) 32%, rgba(8,8,8,0.18) 58%, transparent 82%);
+  pointer-events: none;
+  z-index: 0;
+}
+.landing-section > * {
+  position: relative;
+  z-index: 1;
+}
+.landing-inner {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  /* subtle text backdrop for readability without box */
+  text-shadow: 0 1px 10px rgba(0,0,0,0.65);
+}
+.landing-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 200;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0.75rem 0 1rem 0;
+}
+.landing-title em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+}
+.landing-desc {
+  color: var(--grey);
+  max-width: 60ch;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+.landing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+.landing-card {
+  background: rgba(8,8,8,0.92);
+  padding: 1.25rem;
+}
+.landing-card-num {
+  font-family: 'SF Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.landing-card h4 {
+  margin: 0.5rem 0 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.landing-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--grey);
+  line-height: 1.4;
+}
+.demo-preview-card {
+  border: 1px solid rgba(244,244,240,0.08);
+}
+@media (max-width: 768px) {
+  .demo-preview-card { grid-template-columns: 1fr !important; }
+  .landing-section { padding: 3rem 1rem; min-height: auto; }
 }
 
 /* ============================================

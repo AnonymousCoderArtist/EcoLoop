@@ -20,11 +20,10 @@ Round-1 prototype: **Upload waste image → Gemini Vision → Multi-class classi
 │   ├── requirements.txt   # Flask 3.1, Flask-Cors, google-genai, dotenv, Pillow>=11.3
 │   └── .env.example       # GEMINI_API_KEY template
 ├── frontend/              # Landing + Dashboard + Scan + Impact + Community (SPA, no build)
-│   ├── index.html         # 8-section landing: hero (end-result without fear) → proof → problem → solution 8 bento (no text over images, 16/9 contain) → how it works 4 → FAQ → CTA → footer
-│   ├── style.css          # Swiss editorial + futuristic — lime #ccff00, dark #080808, 1px borders, glass blur, hero glass for readability
-│   ├── script.js          # SPA nav, scan + demo (loadDemoImageAndAnalyze), box_2d → %, stats refresh, GSAP hero
-│   ├── IMAGE_PROMPTS.md   # Detailed prompts (same 5600K + lime rim, 85mm, 8k) — F8 real, S2/S4 skip, 7 real images already in repo
-│   ├── hero-bg.png, landfill.png, biogas.png, imagescan.png, metrics-strip.png, communiity.png, foreground-bg.png + background 1/2.png
+│   ├── index.html         # 9-section landing: hero → proof (numbers bottom) → problem → solution 8 bento (no text over, 16/9 cover) → rewards (electricity bill) → how it works 4 → FAQ → CTA+footer (one shared image)
+│   ├── style.css          # Swiss editorial + futuristic — lime #ccff00, dark #080808, 1px borders, hero text-shadow + overlays for readability
+│   ├── script.js          # SPA nav, scan + demo, box_2d → %, stats refresh, GSAP hero, rewards pool (500pts → ₹150)
+│   ├── hero-bg.png, landfill.png, biogas.png, imagescan.png, metrics-strip.png, communiity.png, foreground-bg.png + background 1/2.png (7 real images)
 │   └── ...
 ├── docs/
 │   ├── API.md             # Frontend-ready contract — quick connect, zones, demo loader, Swiss render, errors, uv

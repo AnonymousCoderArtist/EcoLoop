@@ -240,6 +240,13 @@
                                         Use Camera
                                     </button>
                                 </div>
+                                <div class="demo-hint" style="margin-top:14px; padding:10px; border:1px dashed rgba(164,255,0,0.3); border-radius:8px; background: rgba(164,255,0,0.06);">
+                                    <p style="font-size:11px; letter-spacing:0.08em; color: #a3e635; margin:0 0 6px 0;">DEMO QUICK START</p>
+                                    <button class="btn-secondary" style="width:100%; border-color:#a3e635; color:#a3e635;" onclick="loadDemoImage()">
+                                        Try Demo — Swiss Zones (4 zones, 45 pts, Biogas max)
+                                    </button>
+                                    <p style="font-size:11px; color:#9ca3af; margin:6px 0 0 0;">Uses <code>/api/demo/image</code> + <code>/api/demo/analyze</code> (1.2s loader) → adds to EcoPoints</p>
+                                </div>
                                 <input type="file" id="image-input" accept="image/*" hidden onchange="handleImageUpload(event)">
                             </div>
                             <div class="preview-container hidden" id="preview-container">

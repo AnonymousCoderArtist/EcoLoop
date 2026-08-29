@@ -3,9 +3,14 @@
    ============================================ */
 
 const API_BASE = 'http://127.0.0.1:5000/api/analyze';
+const API_DEMO = 'http://127.0.0.1:5000/api/demo/analyze';
+const API_DEMO_IMAGE = 'http://127.0.0.1:5000/api/demo/image';
+const API_STATS = 'http://127.0.0.1:5000/api/stats';
+const API_HEALTH = 'http://127.0.0.1:5000/api/health';
 let mode = 'real';
 let currentImage = null;
 let analyzing = false;
+let demoLoaded = false;
 
 // ============================================
 // Navigation
@@ -106,6 +111,65 @@ function setImagePreview(dataUrl) {
 }
 
 // ============================================
+// Demo: Swiss Zones (annotated) + Live
+// ============================================
+async function loadDemoImage() {
+  try {
+    // Use backend demo image as preview (no upload needed)
+    const res = await fetch(API_DEMO_IMAGE);
+    if (!res.ok) throw new Error('Demo image not available');
+    const blob = await res.blob();
+    const reader = new FileReader();
+    reader.onload = (e) => setImagePreview(e.target.result);
+    reader.readAsDataURL(blob);
+    mode = 'demo';
+    demoLoaded = true;
+    // Hint in UI
+    const img = document.getElementById('uploaded-image');
+    if (img) img.alt = 'Swiss Zones Demo — 4 zones';
+  } catch (e) {
+    console.error('Demo image failed', e);
+    alert('Demo image not ready — run: uv run python backend/visualize.py');
+  }
+}
+
+async function callDemoAPI() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  const res = await fetch(API_DEMO, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ demo: 'annotated' }),
+    signal: controller.signal,
+  });
+  clearTimeout(timeout);
+  if (!res.ok) throw new Error(`Demo HTTP ${res.status}`);
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error?.message || 'Demo failed');
+  return normalizeResult(json);
+}
+
+async function refreshStats() {
+  try {
+    const j = await fetch(API_STATS).then(r => r.json());
+    if (j.eco_points) {
+      document.getElementById('dashboard-ecopoints').textContent = j.eco_points.toLocaleString();
+      document.getElementById('metric-points').textContent = j.eco_points.toLocaleString();
+      document.getElementById('scan-ecopoints').textContent = j.eco_points.toLocaleString();
+      document.getElementById('impact-points').textContent = j.eco_points.toLocaleString();
+    }
+    if (j.waste_diverted_kg) {
+      document.getElementById('metric-waste').textContent = j.waste_diverted_kg;
+      document.getElementById('impact-waste').textContent = j.waste_diverted_kg;
+    }
+    if (j.co2_saved_kg) {
+      document.getElementById('metric-co2').textContent = j.co2_saved_kg;
+      document.getElementById('impact-co2').textContent = j.co2_saved_kg;
+    }
+  } catch {}
+}
+
+// ============================================
 // Analysis Flow
 // ============================================
 async function startAnalysis() {
@@ -143,14 +207,23 @@ async function startAnalysis() {
 
   let result;
   try {
-    if (mode === 'real') {
+    if (mode === 'demo' && demoLoaded) {
+      result = await callDemoAPI(); // 1.2s loader backend + Swiss 4 zones
+    } else if (mode === 'real') {
       result = await callAPI(currentImage);
     } else {
       result = getMockResult();
     }
   } catch (err) {
     console.error('Analysis error:', err);
-    alert('Analysis failed. Switching to demo mode for this run.');
+    const msg = err.message || '';
+    if (msg.includes('HTTP 429') || msg.includes('rate')) {
+      alert('Backend busy (rate limit) — showing demo fallback. Retry live in 5s.');
+    } else if (msg.includes('GEMINI') || msg.includes('Backend')) {
+      alert('Backend not ready — showing demo. Check health: uv run python backend/app.py');
+    } else {
+      alert('Analysis failed. Showing demo fallback.');
+    }
     result = getMockResult();
   }
 
@@ -159,10 +232,13 @@ async function startAnalysis() {
   renderResult(result);
   updateDashboard(result);
   updateImpact(result);
+  try { await refreshStats(); } catch {}
 
   analysisStatus?.classList.add('hidden');
   analyzing = false;
   btnAnalyze.disabled = false;
+  // Reset demo flag after one use (so next Analyze uses live again unless re-clicked)
+  if (mode === 'demo') { mode = 'real'; demoLoaded = false; }
 }
 
 // ============================================
@@ -185,11 +261,19 @@ async function callAPI(dataUrl) {
 
     clearTimeout(timeout);
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      let msg = `HTTP ${res.status}`;
+      try { const j = await res.json(); if (j.error) msg = j.error.message; } catch {}
+      throw new Error(msg);
+    }
     const json = await res.json();
 
-    if (!json.success || !json.result) {
-      throw new Error('Invalid response');
+    if (!json.success) {
+      throw new Error(json.error?.message || 'Invalid response');
+    }
+    // Backend may return {items, summary} (stream-area zones) or {result: {...}} (legacy single)
+    if (!json.items && !json.result && !json.summary) {
+      throw new Error('Invalid response: no items/result');
     }
 
     return normalizeResult(json);

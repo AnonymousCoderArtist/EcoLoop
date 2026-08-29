@@ -16,6 +16,8 @@
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  overflow-y: auto;
+  height: auto;
 }
 
 body {
@@ -24,6 +26,14 @@ body {
   line-height: 1.2;
   letter-spacing: -0.01em;
   overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+  min-height: 100vh;
+}
+
+#app {
+  min-height: 100vh;
+  overflow: visible;
 }
 
 ::-webkit-scrollbar { width: 4px; }
@@ -37,10 +47,14 @@ body {
   display: none;
   min-height: 100vh;
   animation: fadeIn 0.4s ease;
+  overflow: visible;
+  height: auto;
 }
 
 .page.active {
   display: block;
+  overflow: visible;
+  height: auto;
 }
 
 @keyframes fadeIn {
@@ -184,7 +198,9 @@ body {
   position: relative;
   width: 100%;
   height: 100dvh;
+  min-height: 600px;
   background: var(--black);
+  overflow: visible;
 }
 
 .hero-bg {

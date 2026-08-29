@@ -107,11 +107,11 @@ git checkout backend/gemini
 
 Conventional commits: `feat:`, `docs:`, `fix:` etc. Never commit `.env`.
 
-## Frontend Contract
+## Frontend Contract (Updated — Stream-Area Zones)
 
-See `docs/API.md` for endpoints, request/response shapes, error codes, cURL examples, and bounding-box conversion (`ymin/xmin/ymax/xmax` 0-1000 → `%`).
+See `docs/API.md` for **frontend quick-connect** ( `uv run` + `curl` + JS `fetch` copy/paste), zone-based `items[]` (2-6 areas, Biogas max priority), Swiss box rendering (`box_2d` → `%`), error codes, and summary dashboard.
 
-The frontend on a separate laptop can integrate independently without waiting.
+The frontend on a separate laptop can integrate independently without waiting — **CORS `*`, no auth**, `POST /api/analyze` with `FormData image` returns `items[]` zones ready to render. Visual reference: `uv run python backend/visualize.py` → `backend/image_annotated.png`.
 
 ## Design Philosophy
 

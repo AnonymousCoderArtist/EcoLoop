@@ -3,6 +3,7 @@
 **Branch:** `frontend/round-1`  
 **Last updated:** 2026-08-29  
 **Frontend lead:** Vtx  
+**Remote:** `origin/frontend/round-1` pushed  
 
 ---
 
@@ -33,9 +34,12 @@ For **Round 1** we are not building every feature. We are building a polished, c
   - `frontend/foreground.png`
 - **Landing / Hero**
   - Full-screen hero using local background assets
-  - Base image + foreground transition + reveal image layer
-  - Cursor-following spotlight using canvas radial-gradient mask
+  - Base layer = `background 2.png`
+  - Foreground transition = `foreground.png`
+  - Reveal layer = `background 1.png`
+  - Cursor-following spotlight reveals the base layer through a soft circular mask
   - GSAP entrance animations for title/subtitle/actions
+  - Hero no longer clips scroll (`overflow: hidden` removed) so page can scroll to dashboard
 - **Navigation**
   - Fixed top nav with logo + links
   - Consistent nav across landing, dashboard, scan, impact, community
@@ -85,9 +89,9 @@ For **Round 1** we are not building every feature. We are building a polished, c
 
 - **Single HTML file SPA pattern** — no router, just show/hide `.page` sections
 - **Cursor spotlight mechanic**
-  - Base layer shows `background 1.png`
+  - Base layer shows `background 2.png`
   - Foreground layer shows `foreground.png`
-  - Reveal layer shows `background 2.png`
+  - Reveal layer shows `background 1.png`
   - Canvas draws soft radial gradient at smoothed cursor position
   - `canvas.toDataURL()` is used as `mask-image` on reveal layer
   - Radius: `260px`, lerp factor: `0.1`
@@ -198,6 +202,8 @@ const height = (ymax - ymin) / 10;
 | GSAP `.hero-fade` selector error | Fixed |
 | Camera modal visible on load | Fixed |
 | No Cancel button in camera modal | Fixed |
+| Hero background images reversed | Fixed |
+| Hero scroll clipped by overflow | Fixed |
 | Spotlight too heavy on low-end devices | Not started |
 | Mobile hamburger menu missing | Not started |
 | Scan history missing | Not started |
@@ -248,8 +254,8 @@ const height = (ymax - ymin) / 10;
 | `frontend/index.html` | Main SPA structure |
 | `frontend/style.css` | All styles |
 | `frontend/script.js` | All logic |
-| `frontend/background 1.png` | Base hero image |
-| `frontend/background 2.png` | Reveal hero image |
+| `frontend/background 1.png` | Reveal hero image |
+| `frontend/background 2.png` | Base hero image |
 | `frontend/foreground.png` | Hero foreground transition |
 | `docs/API.md` | Backend API docs |
 | `docs/MASTER_PLAN.md` | Project master plan |
@@ -266,6 +272,18 @@ If you are switching to another laptop:
 4. Open `http://localhost:8080`
 5. If backend is not running, use **DEMO MODE** on the Scan page
 6. GSAP and ScrollTrigger are loaded from CDN — internet required for animations
+
+## 12. Latest Push Status
+
+- Branch `frontend/round-1` has been pushed to remote
+- Remote URL: `https://github.com/AnonymousCoderArtist/EcoLoop.git`
+- PR link: `https://github.com/AnonymousCoderArtist/EcoLoop/pull/new/frontend/round-1`
+- Latest commit includes:
+  - Swapped hero base/reveal images
+  - Removed `overflow: hidden` from hero to allow scrolling
+  - Cleaned up Swiss editorial styles
+  - Fixed GSAP selector targets
+  - Fixed camera modal open/close behavior
 
 ---
 
